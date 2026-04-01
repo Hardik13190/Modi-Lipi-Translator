@@ -1,654 +1,1445 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y4KKJ99YXK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y4KKJ99YXK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-Y4KKJ99YXK');
+  </script>
 
-  gtag('config', 'G-Y4KKJ99YXK');
-</script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Free online Modi Lipi translator. Convert Devanagari text into historic Modi script instantly. Supports Hindi and Marathi with Unicode accuracy.">
-<meta name="keywords" content="Modi Lipi, Modi script translator, Devanagari to Modi, Marathi Modi script, Hindi to Modi converter">
-<title>Modi Lipi Translator | Devanagari to Modi Converter</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Crimson+Pro:wght@300;400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --ink: #1a0f0a;
-    --paper: #f5ede0;
-    --rust: #8b3a1f;
-    --gold: #c4922a;
-    --shadow: rgba(26,15,10,0.15);
-    --border: rgba(139,58,31,0.25);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Crimson Pro', Georgia, serif;
-    min-height: 100vh;
-  }
-  body::after {
-    content:''; position:fixed; inset:14px;
-    border:1.5px solid var(--border);
-    pointer-events:none; z-index:100;
-  }
-  .page { max-width:920px; margin:0 auto; padding:44px 40px 60px; }
-
-  /* ── UI Language Toggle ── */
-  .ui-lang-bar {
-    display:flex; justify-content:flex-end; margin-bottom:28px; gap:0;
-    border:1px solid var(--border); border-radius:3px; overflow:hidden;
-    width:fit-content; margin-left:auto;
-  }
-  .ui-lang-btn {
-    padding:6px 16px; border:none; background:transparent; cursor:pointer;
-    font-family:'Crimson Pro',serif; font-size:13px; color:rgba(26,15,10,.55);
-    border-right:1px solid var(--border); transition:all .18s;
-  }
-  .ui-lang-btn:last-child { border-right:none; }
-  .ui-lang-btn:hover { color:var(--rust); background:rgba(196,146,42,.07); }
-  .ui-lang-btn.active { background:var(--rust); color:var(--paper); }
-
-  /* ── Header ── */
-  header { text-align:center; margin-bottom:40px; }
-  .eyebrow {
-    font-family:'Cormorant Garamond',serif;
-    font-size:12px; letter-spacing:.35em; text-transform:uppercase;
-    color:var(--rust); margin-bottom:8px;
-  }
-  h1 {
-    font-family:'Cormorant Garamond',serif;
-    font-size:clamp(44px,7vw,70px);
-    font-weight:300; line-height:1; margin-bottom:6px;
-  }
-  h1 em { font-style:italic; color:var(--rust); }
-  .rule { display:flex; align-items:center; justify-content:center; gap:14px; margin:10px 0 6px; }
-  .rule-line { height:1px; width:70px; background:linear-gradient(to right,transparent,var(--gold)); }
-  .rule-line.r { background:linear-gradient(to left,transparent,var(--gold)); }
-  .rule-diamond { width:7px;height:7px;background:var(--gold);transform:rotate(45deg); }
-  .subtitle { font-size:15px; color:rgba(26,15,10,.5); letter-spacing:.04em; }
-
-  /* ── Translator Card ── */
-  .card {
-    display:grid; grid-template-columns:1fr 44px 1fr;
-    border:1px solid var(--border); border-radius:6px; overflow:hidden;
-    background:rgba(255,255,255,.4);
-    box-shadow:0 4px 28px var(--shadow);
-    margin-bottom:24px;
-  }
-  .panel { display:flex; flex-direction:column; }
-  .panel-head {
-    padding:12px 18px 8px;
-    font-family:'Cormorant Garamond',serif;
-    font-size:10px; letter-spacing:.28em; text-transform:uppercase;
-    color:var(--rust); font-weight:600;
-    border-bottom:1px solid var(--border);
-    background:rgba(196,146,42,.06);
-  }
-  .panel-lang {
-    padding:5px 18px 10px;
-    font-family:'Cormorant Garamond',serif;
-    font-size:20px; font-weight:300; font-style:italic;
-    border-bottom:1px solid var(--border);
-    background:rgba(196,146,42,.06);
-  }
-  textarea {
-    flex:1; min-height:210px; padding:18px;
-    border:none; background:transparent;
-    font-family:'Crimson Pro',serif; font-size:18px;
-    color:var(--ink); resize:none; outline:none; line-height:1.7;
-  }
-  textarea::placeholder { color:rgba(26,15,10,.28); font-style:italic; }
-  .sep {
-    border-left:1px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(196,146,42,.03);
-  }
-  .arrow-circle {
-    width:30px;height:30px; border:1px solid var(--border);
-    border-radius:50%; background:var(--paper);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--rust); font-size:13px;
-  }
-  .output-body {
-    flex:1; min-height:210px; padding:18px;
-    font-size:22px; line-height:1.9;
-  }
-  .placeholder-text {
-    color:rgba(26,15,10,.28); font-style:italic;
-    font-family:'Crimson Pro',serif; font-size:16px;
-  }
-  .modi-out { animation:fadein .3s ease; white-space:pre-wrap; }
-  @keyframes fadein { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:translateY(0)} }
-
-  .bar {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:11px 18px; border-top:1px solid var(--border);
-    background:rgba(196,146,42,.04); font-size:13px; color:rgba(26,15,10,.4);
-  }
-  .bar-right { display:flex; gap:8px; }
-  .btn {
-    padding:7px 18px; border:1px solid var(--border); border-radius:3px;
-    cursor:pointer; font-family:'Crimson Pro',serif; font-size:13px;
-    color:rgba(26,15,10,.6); background:transparent; transition:all .2s;
-  }
-  .btn:hover { border-color:var(--rust); color:var(--rust); }
-  .btn-go {
-    padding:8px 22px; background:var(--rust); border:none; border-radius:3px;
-    cursor:pointer; font-family:'Cormorant Garamond',serif; font-size:14px;
-    font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-    color:var(--paper); transition:all .2s;
-  }
-  .btn-go:hover { background:#6d2d17; transform:translateY(-1px); box-shadow:0 4px 10px rgba(139,58,31,.3); }
-  .btn-go:active { transform:translateY(0); }
-
-  /* ── Note ── */
-  .note {
-    border-left:3px solid var(--gold); padding:12px 16px;
-    background:rgba(196,146,42,.07); border-radius:0 4px 4px 0;
-    font-size:13.5px; color:rgba(26,15,10,.6); line-height:1.6;
-    margin-bottom:24px;
-  }
-  .note strong { color:var(--rust); }
-  .note a { color:var(--rust); }
-
-  /* ── Reference table ── */
-  details {
-    border:1px solid var(--border); border-radius:4px;
-    overflow:hidden; margin-bottom:20px;
-  }
-  summary {
-    padding:13px 18px; cursor:pointer;
-    font-family:'Cormorant Garamond',serif;
-    font-size:15px; font-weight:600; color:var(--rust);
-    letter-spacing:.05em; background:rgba(196,146,42,.06);
-    list-style:none; display:flex; align-items:center; gap:8px;
-    user-select:none;
-  }
-  summary::-webkit-details-marker { display:none; }
-  summary::before { content:'▸'; transition:transform .2s; display:inline-block; }
-  details[open] summary::before { transform:rotate(90deg); }
-  .ref-section-title {
-    padding:7px 14px;
-    font-family:'Cormorant Garamond',serif;
-    font-size:11px; letter-spacing:.25em; text-transform:uppercase;
-    color:var(--rust); background:rgba(196,146,42,.04);
-    border-bottom:1px solid var(--border); border-top:1px solid var(--border);
-    font-weight:600;
-  }
-  .ref-table {
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
-    gap:1px; background:var(--border);
-  }
-  .ref-cell { background:var(--paper); padding:9px 6px; text-align:center; }
-  .ref-modi { font-size:20px; line-height:1.5; display:block; }
-  .ref-deva { font-size:14px; color:var(--rust); display:block; }
-  .ref-rom  { font-size:10px; color:rgba(26,15,10,.45); display:block; letter-spacing:.02em; }
-
-  .footer { text-align:center; padding-top:28px; color:rgba(26,15,10,.22); font-size:18px; letter-spacing:.3em; }
-
-  @media(max-width:600px){
-    .page{padding:30px 16px 48px;}
-    .card{grid-template-columns:1fr;}
-    .sep{display:none;}
-    .panel:first-child{border-bottom:1px solid var(--border);}
-    .ui-lang-bar{width:100%; justify-content:center;}
-  }
-</style>
-</head>
-<body>
-<div class="page">
-
-  <!-- UI Language Toggle -->
-  <div class="ui-lang-bar">
-    <button class="ui-lang-btn active" onclick="setUILang('en')">English</button>
-    <button class="ui-lang-btn" onclick="setUILang('hi')">हिंदी</button>
-    <button class="ui-lang-btn" onclick="setUILang('mr')">मराठी</button>
-  </div>
-
-  <header>
-    <div class="eyebrow" id="ui-eyebrow">Ancient Script Converter</div>
-    <h1>Modi <em>Lipi</em></h1>
-    <div class="rule">
-      <div class="rule-line"></div><div class="rule-diamond"></div><div class="rule-line r"></div>
-    </div>
-    <p class="subtitle" id="ui-subtitle">Convert Devanagari text into the historic script of Maharashtra</p>
-  </header>
-
-  <div class="note" id="ui-note">
-    <strong id="ui-note-strong">Font required:</strong>
-    <span id="ui-note-text"> Install <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> from Google Fonts so Modi characters display correctly. Without it you will see empty boxes. &nbsp;|&nbsp; <strong>Tip:</strong> Press Ctrl+Enter to translate.</span>
-  </div>
-
-  <div class="card">
-    <div class="panel">
-      <div class="panel-head" id="ui-input-head">Input</div>
-      <div class="panel-lang" id="ui-input-lang">Devanagari</div>
-      <textarea id="inp" placeholder="देवनागरी में लिखें…" oninput="updateCount()"></textarea>
-      <div class="bar">
-        <span id="count">0 <span id="ui-chars">characters</span></span>
-        <div class="bar-right">
-          <button class="btn" id="ui-clear-btn" onclick="clearAll()">Clear</button>
-          <button class="btn-go" id="ui-translate-btn" onclick="doTranslate()">Translate</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="sep"><div class="arrow-circle">⟶</div></div>
-
-    <div class="panel">
-      <div class="panel-head" id="ui-output-head">Output</div>
-      <div class="panel-lang">Modi Lipi</div>
-      <div class="output-body" id="out">
-        <span class="placeholder-text" id="ui-placeholder">Modi script will appear here…</span>
-      </div>
-      <div class="bar">
-        <span id="out-info"></span>
-        <div class="bar-right">
-          <button class="btn" id="copy-btn" style="display:none" onclick="copyOut()" data-label="Copy">Copy</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <details>
-    <summary id="ui-ref-title">Modi Script Reference Chart (Unicode 17.0)</summary>
-    <div class="ref-section-title" id="ui-ref-vowels">Independent Vowels</div>
-    <div class="ref-table" id="ref-vowels"></div>
-    <div class="ref-section-title" id="ui-ref-cons">Consonants</div>
-    <div class="ref-table" id="ref-cons"></div>
-    <div class="ref-section-title" id="ui-ref-matras">Dependent Vowel Signs (Matras)</div>
-    <div class="ref-table" id="ref-matras"></div>
-    <div class="ref-section-title" id="ui-ref-signs">Various Signs &amp; Punctuation</div>
-    <div class="ref-table" id="ref-signs"></div>
-    <div class="ref-section-title" id="ui-ref-digits">Digits</div>
-    <div class="ref-table" id="ref-digits"></div>
-  </details>
-
-  <div class="footer">✦ &nbsp; ✦ &nbsp; ✦</div>
-</div>
-
-<script>
-// ═══════════════════════════════════════════════════════════════════════════════
-// UI LANGUAGE STRINGS
-// ═══════════════════════════════════════════════════════════════════════════════
-const UI = {
-  en: {
-    eyebrow:      'Ancient Script Converter',
-    subtitle:     'Convert Devanagari text into the historic script of Maharashtra',
-    noteStrong:   'Font required:',
-    noteText:     ' Install <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> from Google Fonts so Modi characters display correctly. Without it you will see empty boxes. &nbsp;|&nbsp; <strong>Tip:</strong> Press Ctrl+Enter to translate.',
-    inputHead:    'INPUT',
-    inputLang:    'Devanagari',
-    outputHead:   'OUTPUT',
-    chars:        'characters',
-    placeholder:  'Type or paste Devanagari text here…',
-    clearBtn:     'Clear',
-    translateBtn: 'Translate',
-    copyBtn:      'Copy',
-    copiedBtn:    'Copied!',
-    outPlaceholder:'Modi script will appear here…',
-    refTitle:     'Modi Script Reference Chart (Unicode 17.0)',
-    refVowels:    'Independent Vowels',
-    refCons:      'Consonants',
-    refMatras:    'Dependent Vowel Signs (Matras)',
-    refSigns:     'Various Signs & Punctuation',
-    refDigits:    'Digits',
-  },
-  hi: {
-    eyebrow:      'प्राचीन लिपि परिवर्तक',
-    subtitle:     'देवनागरी पाठ को महाराष्ट्र की ऐतिहासिक मोडी लिपि में बदलें',
-    noteStrong:   'फ़ॉन्ट आवश्यक:',
-    noteText:     ' मोडी अक्षर सही दिखाने के लिए Google Fonts से <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इंस्टॉल करें। इसके बिना खाली बक्से दिखेंगे। &nbsp;|&nbsp; <strong>सुझाव:</strong> अनुवाद के लिए Ctrl+Enter दबाएँ।',
-    inputHead:    'इनपुट',
-    inputLang:    'देवनागरी',
-    outputHead:   'आउटपुट',
-    chars:        'अक्षर',
-    placeholder:  'यहाँ देवनागरी में लिखें…',
-    clearBtn:     'साफ़ करें',
-    translateBtn: 'अनुवाद करें',
-    copyBtn:      'कॉपी करें',
-    copiedBtn:    'कॉपी हुआ!',
-    outPlaceholder:'मोडी लिपि यहाँ दिखेगी…',
-    refTitle:     'मोडी लिपि संदर्भ तालिका (Unicode 17.0)',
-    refVowels:    'स्वर',
-    refCons:      'व्यंजन',
-    refMatras:    'मात्राएँ',
-    refSigns:     'विविध चिह्न एवं विराम',
-    refDigits:    'अंक',
-  },
-  mr: {
-    eyebrow:      'प्राचीन लिपी परिवर्तक',
-    subtitle:     'देवनागरी मजकूर महाराष्ट्राच्या ऐतिहासिक मोडी लिपीत रूपांतरित करा',
-    noteStrong:   'फॉन्ट आवश्यक:',
-    noteText:     ' मोडी अक्षरे योग्य दिसण्यासाठी Google Fonts वरून <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इन्स्टॉल करा। त्याशिवाय रिकामी चौकटे दिसतील। &nbsp;|&nbsp; <strong>टीप:</strong> भाषांतरासाठी Ctrl+Enter दाबा।',
-    inputHead:    'इनपुट',
-    inputLang:    'देवनागरी',
-    outputHead:   'आउटपुट',
-    chars:        'अक्षरे',
-    placeholder:  'येथे देवनागरी मजकूर लिहा…',
-    clearBtn:     'साफ करा',
-    translateBtn: 'भाषांतर करा',
-    copyBtn:      'कॉपी करा',
-    copiedBtn:    'कॉपी झाले!',
-    outPlaceholder:'मोडी लिपी येथे दिसेल…',
-    refTitle:     'मोडी लिपी संदर्भ तक्ता (Unicode 17.0)',
-    refVowels:    'स्वर',
-    refCons:      'व्यंजन',
-    refMatras:    'मात्रा',
-    refSigns:     'विविध चिन्हे व विरामचिन्हे',
-    refDigits:    'अंक',
-  }
-};
-
-let currentUILang = 'en';
-
-function setUILang(lang) {
-  currentUILang = lang;
-  document.querySelectorAll('.ui-lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.ui-lang-btn[onclick="setUILang('${lang}')"]`).classList.add('active');
-  const s = UI[lang];
-  document.getElementById('ui-eyebrow').textContent        = s.eyebrow;
-  document.getElementById('ui-subtitle').textContent       = s.subtitle;
-  document.getElementById('ui-note-strong').textContent    = s.noteStrong;
-  document.getElementById('ui-note-text').innerHTML        = s.noteText;
-  document.getElementById('ui-input-head').textContent     = s.inputHead;
-  document.getElementById('ui-input-lang').textContent     = s.inputLang;
-  document.getElementById('ui-output-head').textContent    = s.outputHead;
-  document.getElementById('ui-chars').textContent          = s.chars;
-  document.getElementById('inp').placeholder               = s.placeholder;
-  document.getElementById('ui-clear-btn').textContent      = s.clearBtn;
-  document.getElementById('ui-translate-btn').textContent  = s.translateBtn;
-  document.getElementById('ui-ref-title').childNodes[1]
-    ? null : document.getElementById('ui-ref-title').lastChild.textContent = ' ' + s.refTitle;
-  document.getElementById('ui-ref-title').innerHTML        = '&#9656; ' + s.refTitle;
-  document.getElementById('ui-ref-vowels').textContent     = s.refVowels;
-  document.getElementById('ui-ref-cons').textContent       = s.refCons;
-  document.getElementById('ui-ref-matras').textContent     = s.refMatras;
-  document.getElementById('ui-ref-signs').textContent      = s.refSigns;
-  document.getElementById('ui-ref-digits').textContent     = s.refDigits;
-  const copyBtn = document.getElementById('copy-btn');
-  copyBtn.dataset.label = s.copyBtn;
-  if (copyBtn.textContent !== s.copiedBtn) copyBtn.textContent = s.copyBtn;
-  const ph = document.getElementById('out').querySelector('.placeholder-text');
-  if (ph) ph.textContent = s.outPlaceholder;
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// COMPLETE DEVANAGARI → MODI MAPPING
-// Based on Unicode Standard 17.0: U0900 (Devanagari) & U11600 (Modi)
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// ── Independent Vowels ──────────────────────────────────────────────────────
-// Devanagari (U0900) → Modi (U11600)
-// [modiCP, devaChar, devaCP, label]
-const INDEPENDENT_VOWELS = [
-  [0x11600, 'अ',  0x0905, 'A'],
-  [0x11601, 'आ', 0x0906, 'AA'],
-  [0x11602, 'इ',  0x0907, 'I'],
-  [0x11603, 'ई',  0x0908, 'II'],
-  [0x11604, 'उ',  0x0909, 'U'],
-  [0x11605, 'ऊ', 0x090A, 'UU'],
-  [0x11606, 'ऋ', 0x090B, 'Voc. R'],   // VOCALIC R
-  [0x11607, 'ॠ', 0x0960, 'Voc. RR'],  // VOCALIC RR (Sanskrit)
-  [0x11608, 'ऌ', 0x090C, 'Voc. L'],   // VOCALIC L
-  [0x11609, 'ॡ', 0x0961, 'Voc. LL'],  // VOCALIC LL (Sanskrit)
-  [0x1160A, 'ए',  0x090F, 'E'],
-  [0x1160B, 'ऐ', 0x0910, 'AI'],
-  [0x1160C, 'ओ', 0x0913, 'O'],
-  [0x1160D, 'औ', 0x0914, 'AU'],
-];
-
-// ── Consonants ───────────────────────────────────────────────────────────────
-// Modi 1160E–1162F  ↔  Devanagari consonants
-const CONSONANTS = [
-  [0x1160E, 'क',  0x0915, 'KA'],
-  [0x1160F, 'ख',  0x0916, 'KHA'],
-  [0x11610, 'ग',  0x0917, 'GA'],
-  [0x11611, 'घ',  0x0918, 'GHA'],
-  [0x11612, 'ङ',  0x0919, 'NGA'],
-  [0x11613, 'च',  0x091A, 'CA'],
-  [0x11614, 'छ',  0x091B, 'CHA'],
-  [0x11615, 'ज',  0x091C, 'JA'],
-  [0x11616, 'झ',  0x091D, 'JHA'],
-  [0x11617, 'ञ',  0x091E, 'NYA'],
-  [0x11618, 'ट',  0x091F, 'TTA'],
-  [0x11619, 'ठ',  0x0920, 'TTHA'],
-  [0x1161A, 'ड',  0x0921, 'DDA'],
-  [0x1161B, 'ढ',  0x0922, 'DDHA'],
-  [0x1161C, 'ण',  0x0923, 'NNA'],
-  [0x1161D, 'त',  0x0924, 'TA'],
-  [0x1161E, 'थ',  0x0925, 'THA'],
-  [0x1161F, 'द',  0x0926, 'DA'],
-  [0x11620, 'ध',  0x0927, 'DHA'],
-  [0x11621, 'न',  0x0928, 'NA'],
-  [0x11622, 'प',  0x092A, 'PA'],
-  [0x11623, 'फ',  0x092B, 'PHA'],
-  [0x11624, 'ब',  0x092C, 'BA'],
-  [0x11625, 'भ',  0x092D, 'BHA'],
-  [0x11626, 'म',  0x092E, 'MA'],
-  [0x11627, 'य',  0x092F, 'YA'],
-  [0x11628, 'र',  0x0930, 'RA'],
-  [0x11629, 'ल',  0x0932, 'LA'],
-  [0x1162A, 'व',  0x0935, 'VA'],
-  [0x1162B, 'श',  0x0936, 'SHA'],
-  [0x1162C, 'ष',  0x0937, 'SSA'],
-  [0x1162D, 'स',  0x0938, 'SA'],
-  [0x1162E, 'ह',  0x0939, 'HA'],
-  [0x1162F, 'ळ',  0x0933, 'LLA'],
-];
-
-// ── Dependent Vowel Signs (Matras) ───────────────────────────────────────────
-// Modi 11630–1163C  ↔  Devanagari vowel signs
-// [modiCP, devaCP, label]
-const DEP_VOWEL_SIGNS = [
-  [0x11630, 0x093E, 'AA ा'],
-  [0x11631, 0x093F, 'I ि'],
-  [0x11632, 0x0940, 'II ी'],
-  [0x11633, 0x0941, 'U ु'],
-  [0x11634, 0x0942, 'UU ू'],
-  [0x11635, 0x0943, 'Voc.R ृ'],
-  [0x11636, 0x0944, 'Voc.RR ॄ'],
-  [0x11637, 0x0962, 'Voc.L ॢ'],
-  [0x11638, 0x0963, 'Voc.LL ॣ'],
-  [0x11639, 0x0947, 'E े'],
-  [0x1163A, 0x0948, 'AI ै'],
-  [0x1163B, 0x094B, 'O ो'],
-  [0x1163C, 0x094C, 'AU ौ'],
-];
-
-// ── Various Signs ────────────────────────────────────────────────────────────
-// Modi 1163D–11640  ↔  Devanagari signs
-const VARIOUS_SIGNS = [
-  [0x1163D, 0x0902, 'Anusvara ं'],   // MODI SIGN ANUSVARA
-  [0x1163E, 0x0903, 'Visarga ः'],    // MODI SIGN VISARGA
-  [0x1163F, 0x094D, 'Virama ्'],     // MODI SIGN VIRAMA (halant)
-  [0x11640, 0x0901, 'Ardhacandra ँ'],// MODI SIGN ARDHACANDRA
-];
-
-// ── Punctuation ──────────────────────────────────────────────────────────────
-// Modi 11641–11644  ↔  Devanagari punctuation
-const PUNCTUATION = [
-  [0x11641, 0x0964, 'Danda ।'],
-  [0x11642, 0x0965, 'Dbl Danda ॥'],
-  [0x11643, null,   'Abbrev.'],   // No Devanagari equivalent
-  [0x11644, null,   'Huva'],      // No Devanagari equivalent
-];
-
-// ── Modi Digits ──────────────────────────────────────────────────────────────
-// Modi 11650–11659  ↔  Devanagari digits 0966–096F
-const DIGITS = [
-  [0x11650, 0x0966, '0 ०'],
-  [0x11651, 0x0967, '1 १'],
-  [0x11652, 0x0968, '2 २'],
-  [0x11653, 0x0969, '3 ३'],
-  [0x11654, 0x096A, '4 ४'],
-  [0x11655, 0x096B, '5 ५'],
-  [0x11656, 0x096C, '6 ६'],
-  [0x11657, 0x096D, '7 ७'],
-  [0x11658, 0x096E, '8 ८'],
-  [0x11659, 0x096F, '9 ९'],
-];
-
-// ── Build master lookup: Devanagari codepoint → Modi string ──────────────────
-const D2M = {};
-
-for (const [mcp, , dcp] of INDEPENDENT_VOWELS) {
-  if (dcp) D2M[dcp] = String.fromCodePoint(mcp);
-}
-for (const [mcp, , dcp] of CONSONANTS) {
-  if (dcp) D2M[dcp] = String.fromCodePoint(mcp);
-}
-for (const [mcp, dcp] of DEP_VOWEL_SIGNS) {
-  if (dcp) D2M[dcp] = String.fromCodePoint(mcp);
-}
-for (const [mcp, dcp] of VARIOUS_SIGNS) {
-  if (dcp) D2M[dcp] = String.fromCodePoint(mcp);
-}
-for (const [mcp, dcp] of PUNCTUATION) {
-  if (dcp) D2M[dcp] = String.fromCodePoint(mcp);
-}
-for (const [mcp, dcp] of DIGITS) {
-  if (dcp) D2M[dcp] = String.fromCodePoint(mcp);
-}
-
-// Also map ASCII digits 0–9 → Modi digits
-for (let i = 0; i <= 9; i++) {
-  D2M[String(i)] = String.fromCodePoint(0x11650 + i);
-}
-
-// ── Converter ─────────────────────────────────────────────────────────────────
-function devanagariToModi(text) {
-  let out = '';
-  for (const ch of text) {
-    const cp = ch.codePointAt(0);
-    if (D2M[cp] !== undefined) {
-      out += D2M[cp];
-    } else if (D2M[ch] !== undefined) {
-      out += D2M[ch];
-    } else if (ch === ' ' || ch === '\n' || ch === '\r' || ch === '\t') {
-      out += ch;
-    } else {
-      // Pass through: punctuation, unknown chars
-      out += ch;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Free online Modi Lipi translator. Convert Devanagari text into historic Modi script instantly. Supports Hindi and Marathi with Unicode accuracy.">
+  <meta name="keywords"
+    content="Modi Lipi, Modi script translator, Devanagari to Modi, Marathi Modi script, Hindi to Modi converter">
+  <title>Modi Lipi Translator | Devanagari to Modi Converter</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Crimson+Pro:wght@300;400&family=Noto+Serif+Devanagari:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a0f0a;
+      --paper: #f5ede0;
+      --rust: #8b3a1f;
+      --gold: #c4922a;
+      --shadow: rgba(26, 15, 10, 0.15);
+      --border: rgba(139, 58, 31, 0.25);
     }
-  }
-  return out;
-}
 
-// ── UI logic ───────────────────────────────────────────────────────────────────
-let lastResult = '';
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-function updateCount() {
-  const n = document.getElementById('inp').value.length;
-  document.getElementById('count').innerHTML =
-    n + ' <span id="ui-chars">' + UI[currentUILang].chars + '</span>';
-}
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Crimson Pro', Georgia, serif;
+      min-height: 100vh;
+    }
 
-function clearAll() {
-  document.getElementById('inp').value = '';
-  document.getElementById('out').innerHTML =
-    '<span class="placeholder-text">' + UI[currentUILang].outPlaceholder + '</span>';
-  document.getElementById('count').innerHTML =
-    '0 <span id="ui-chars">' + UI[currentUILang].chars + '</span>';
-  document.getElementById('out-info').textContent = '';
-  document.getElementById('copy-btn').style.display = 'none';
-  lastResult = '';
-}
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 14px;
+      border: 1.5px solid var(--border);
+      pointer-events: none;
+      z-index: 100;
+    }
 
-function doTranslate() {
-  const text = document.getElementById('inp').value;
-  if (!text.trim()) return;
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 44px 40px 60px;
+    }
 
-  lastResult = devanagariToModi(text);
+    /* ── UI Language Toggle ── */
+    .ui-lang-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      width: fit-content;
+      margin-left: auto;
+    }
 
-  const outEl = document.getElementById('out');
-  outEl.innerHTML = '';
-  const div = document.createElement('div');
-  div.className = 'modi-out';
-  div.style.cssText = "font-family:'Noto Sans Modi','Segoe UI Historic',serif;font-size:24px;line-height:2;";
-  div.textContent = lastResult;
-  outEl.appendChild(div);
+    .ui-lang-btn {
+      padding: 6px 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: 'Crimson Pro', serif;
+      font-size: 13px;
+      color: rgba(26, 15, 10, .55);
+      border-right: 1px solid var(--border);
+      transition: all .18s;
+    }
 
-  const s = UI[currentUILang];
-  document.getElementById('out-info').textContent = lastResult.length + ' ' + s.chars;
-  const cb = document.getElementById('copy-btn');
-  cb.style.display = 'inline-block';
-  cb.textContent = s.copyBtn;
-  cb.dataset.label = s.copyBtn;
-}
+    .ui-lang-btn:last-child {
+      border-right: none;
+    }
 
-function copyOut() {
-  if (!lastResult) return;
-  navigator.clipboard.writeText(lastResult).then(() => {
-    const b = document.getElementById('copy-btn');
-    b.textContent = UI[currentUILang].copiedBtn;
-    setTimeout(() => { b.textContent = b.dataset.label; }, 2000);
-  });
-}
+    .ui-lang-btn:hover {
+      color: var(--rust);
+      background: rgba(196, 146, 42, .07);
+    }
 
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') doTranslate();
-});
+    .ui-lang-btn.active {
+      background: var(--rust);
+      color: var(--paper);
+    }
 
-// ── Build reference chart ──────────────────────────────────────────────────────
-const MF = "font-family:'Noto Sans Modi','Segoe UI Historic',serif";
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-function makeCell(modiCp, devaDisplay, romLabel) {
-  const c = document.createElement('div');
-  c.className = 'ref-cell';
-  c.innerHTML =
-    `<span class="ref-modi" style="${MF}">${String.fromCodePoint(modiCp)}</span>` +
-    `<span class="ref-deva">${devaDisplay}</span>` +
-    `<span class="ref-rom">${romLabel}</span>`;
-  return c;
-}
+    .eyebrow {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 8px;
+    }
 
-// Independent vowels
-const rv = document.getElementById('ref-vowels');
-for (const [mcp, deva, , label] of INDEPENDENT_VOWELS) {
-  rv.appendChild(makeCell(mcp, deva, label));
-}
+    .eyebrow.deva-mode {
+      letter-spacing: 0;
+      text-transform: none;
+      font-size: 14px;
+    }
 
-// Consonants
-const rc = document.getElementById('ref-cons');
-for (const [mcp, deva, , label] of CONSONANTS) {
-  rc.appendChild(makeCell(mcp, deva, label));
-}
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 7vw, 70px);
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
 
-// Matras — show applied to क (KA = U+1160E) for visual context
-const rm = document.getElementById('ref-matras');
-for (const [mcp, dcp, label] of DEP_VOWEL_SIGNS) {
-  const ka   = String.fromCodePoint(0x1160E); // Modi KA
-  const matra = String.fromCodePoint(mcp);
-  const devaKa = 'क' + String.fromCodePoint(dcp);
-  const c = document.createElement('div');
-  c.className = 'ref-cell';
-  c.innerHTML =
-    `<span class="ref-modi" style="${MF}">${ka}${matra}</span>` +
-    `<span class="ref-deva">${devaKa}</span>` +
-    `<span class="ref-rom">${label}</span>`;
-  rm.appendChild(c);
-}
+    h1 em {
+      font-style: italic;
+      color: var(--rust);
+    }
 
-// Signs & Punctuation
-const rs = document.getElementById('ref-signs');
-for (const [mcp, dcp, label] of [...VARIOUS_SIGNS, ...PUNCTUATION]) {
-  const devaDisp = dcp ? String.fromCodePoint(dcp) : '—';
-  rs.appendChild(makeCell(mcp, devaDisp, label));
-}
+    .rule {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 10px 0 6px;
+    }
 
-// Digits
-const rd = document.getElementById('ref-digits');
-for (const [mcp, dcp, label] of DIGITS) {
-  rd.appendChild(makeCell(mcp, String.fromCodePoint(dcp), label));
-}
-</script>
+    .rule-line {
+      height: 1px;
+      width: 70px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+
+    .rule-line.r {
+      background: linear-gradient(to left, transparent, var(--gold));
+    }
+
+    .rule-diamond {
+      width: 7px;
+      height: 7px;
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: rgba(26, 15, 10, .5);
+      letter-spacing: .04em;
+    }
+
+    /* ── Note ── */
+    .note {
+      border-left: 3px solid var(--gold);
+      padding: 12px 16px;
+      background: rgba(196, 146, 42, .07);
+      border-radius: 0 4px 4px 0;
+      font-size: 13.5px;
+      color: rgba(26, 15, 10, .6);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .note strong {
+      color: var(--rust);
+    }
+
+    .note a {
+      color: var(--rust);
+    }
+
+    /* ── Translator Wrap ── */
+    .translator-wrap {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 4px 28px var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    /* ── Language Bar (Google Translate style) ── */
+    .lang-bar {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, .5);
+    }
+
+    .lang-opts {
+      display: flex;
+      flex: 1;
+    }
+
+    .lang-opt {
+      flex: 1;
+      padding: 13px 6px;
+      border: none;
+      border-right: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(26, 15, 10, .45);
+      letter-spacing: .04em;
+      transition: all .2s;
+      position: relative;
+    }
+
+    .lang-opt:last-child {
+      border-right: none;
+    }
+
+    .lang-opt:hover {
+      color: var(--rust);
+      background: rgba(196, 146, 42, .07);
+    }
+
+    .lang-opt.active {
+      color: var(--ink);
+      font-weight: 600;
+      background: rgba(255, 255, 255, .8);
+    }
+
+    .lang-opt.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--rust);
+    }
+
+    /* ── Swap Button ── */
+    .swap-btn {
+      padding: 0 18px;
+      border: none;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      background: rgba(196, 146, 42, .06);
+      cursor: pointer;
+      font-size: 20px;
+      color: var(--rust);
+      transition: background .2s, color .2s, transform .3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .swap-btn:hover {
+      background: var(--rust);
+      color: var(--paper);
+    }
+
+    .swap-btn.spin {
+      animation: swapSpin .35s ease;
+    }
+
+    @keyframes swapSpin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(180deg);
+      }
+    }
+
+    /* ── Translator Card ── */
+    .card {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      background: rgba(255, 255, 255, .4);
+      align-items: stretch;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 320px;
+    }
+
+    .panel-head {
+      padding: 12px 18px 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 10px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--rust);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      background: rgba(196, 146, 42, .06);
+    }
+
+    .panel-lang {
+      padding: 5px 18px 10px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      font-style: italic;
+      border-bottom: 1px solid var(--border);
+      background: rgba(196, 146, 42, .06);
+    }
+
+    textarea {
+      flex: 1;
+      min-height: 210px;
+      padding: 18px;
+      border: none;
+      background: transparent;
+      font-family: 'Noto Serif Devanagari', 'Crimson Pro', serif;
+      font-size: 18px;
+      color: var(--ink);
+      resize: none;
+      outline: none;
+      line-height: 1.9;
+    }
+
+    textarea::placeholder {
+      color: rgba(26, 15, 10, .28);
+      font-style: italic;
+    }
+
+    .sep {
+      width: 1px;
+      background: var(--border);
+      position: relative;
+    }
+
+    .arrow-circle {
+      display: none;
+    }
+
+    .output-body {
+      flex: 1;
+      min-height: 210px;
+      padding: 18px;
+      font-size: 22px;
+      line-height: 1.9;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .placeholder-text {
+      color: rgba(26, 15, 10, .28);
+      font-style: italic;
+      font-family: 'Crimson Pro', serif;
+      font-size: 16px;
+    }
+
+    .modi-out {
+      animation: fadein .3s ease;
+      white-space: pre-wrap;
+    }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+        transform: translateY(3px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── Loading & Error ── */
+    .loading-state {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 18px;
+      color: rgba(26, 15, 10, .5);
+      font-style: italic;
+      font-size: 15px;
+      font-family: 'Crimson Pro', serif;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--rust);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .error-state {
+      padding: 18px;
+      color: #8b1a1a;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.6;
+      border-left: 3px solid #c0392b;
+      margin: 12px 18px;
+      border-radius: 0 3px 3px 0;
+      background: rgba(192, 57, 43, .05);
+    }
+
+    /* ── Bottom bar ── */
+    .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(196, 146, 42, .04);
+      font-size: 13px;
+      color: rgba(26, 15, 10, .4);
+    }
+
+    .bar-right {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 7px 18px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: 'Crimson Pro', serif;
+      font-size: 13px;
+      color: rgba(26, 15, 10, .6);
+      background: transparent;
+      transition: all .2s;
+    }
+
+    .btn:hover {
+      border-color: var(--rust);
+      color: var(--rust);
+    }
+
+    .btn-go {
+      padding: 8px 22px;
+      background: var(--rust);
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--paper);
+      transition: all .2s;
+    }
+
+    .btn-go:hover {
+      background: #6d2d17;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(139, 58, 31, .3);
+    }
+
+    .btn-go:active {
+      transform: translateY(0);
+    }
+
+    .btn-go:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Reference table ── */
+    details {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    summary {
+      padding: 13px 18px;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--rust);
+      letter-spacing: .05em;
+      background: rgba(196, 146, 42, .06);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::before {
+      content: '▸';
+      transition: transform .2s;
+      display: inline-block;
+    }
+
+    details[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .ref-section-title {
+      padding: 7px 14px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--rust);
+      background: rgba(196, 146, 42, .04);
+      border-bottom: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .ref-table {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .ref-cell {
+      background: var(--paper);
+      padding: 9px 6px;
+      text-align: center;
+    }
+
+    .ref-modi {
+      font-size: 20px;
+      line-height: 1.5;
+      display: block;
+    }
+
+    .ref-deva {
+      font-size: 14px;
+      color: var(--rust);
+      display: block;
+    }
+
+    .ref-rom {
+      font-size: 10px;
+      color: rgba(26, 15, 10, .45);
+      display: block;
+      letter-spacing: .02em;
+    }
+
+    .footer {
+      text-align: center;
+      padding-top: 28px;
+      color: rgba(26, 15, 10, .22);
+      font-size: 18px;
+      letter-spacing: .3em;
+    }
+
+    /* ── About Section ── */
+    .about-section {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px 32px;
+      background: rgba(255, 255, 255, .35);
+      margin-bottom: 20px;
+      line-height: 1.85;
+    }
+
+    .about-section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--rust);
+      margin-bottom: 12px;
+      letter-spacing: .02em;
+    }
+
+    .about-section p {
+      font-size: 15px;
+      color: rgba(26, 15, 10, .7);
+    }
+
+    /* ── FAQ Section ── */
+    .faq-section {
+      margin-bottom: 20px;
+    }
+
+    .faq-section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--rust);
+      margin-bottom: 14px;
+      letter-spacing: .02em;
+    }
+
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, .35);
+    }
+
+    .faq-item summary {
+      padding: 14px 18px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0;
+      text-transform: none;
+      background: rgba(255, 255, 255, .4);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::before {
+      content: '▸';
+      color: var(--rust);
+      transition: transform .2s;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .faq-item[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .faq-item[open] summary {
+      background: rgba(196, 146, 42, .06);
+      font-weight: 500;
+    }
+
+    .faq-answer {
+      padding: 14px 18px 16px 40px;
+      font-size: 15px;
+      color: rgba(26, 15, 10, .68);
+      line-height: 1.8;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── New Footer ── */
+    .site-footer {
+      text-align: center;
+      padding: 32px 0 8px;
+      border-top: 1px solid var(--border);
+      margin-top: 12px;
+    }
+
+    .site-footer .footer-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      color: rgba(26, 15, 10, .55);
+      margin-bottom: 8px;
+      letter-spacing: .03em;
+    }
+
+    .site-footer .footer-credits {
+      font-size: 12px;
+      color: rgba(26, 15, 10, .35);
+      margin-bottom: 8px;
+      line-height: 1.7;
+    }
+
+    .site-footer .footer-credits a {
+      color: rgba(26, 15, 10, .45);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--border);
+    }
+
+    .site-footer .footer-credits a:hover {
+      color: var(--rust);
+    }
+
+    .site-footer .footer-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-style: italic;
+      color: rgba(26, 15, 10, .3);
+      margin-bottom: 18px;
+    }
+
+    .site-footer .footer-ornament {
+      color: rgba(26, 15, 10, .18);
+      font-size: 16px;
+      letter-spacing: .3em;
+    }
+
+    @media(max-width: 600px) {
+      .page {
+        padding: 30px 16px 48px;
+      }
+
+      .card {
+        grid-template-columns: 1fr;
+      }
+
+      .sep {
+        display: none;
+      }
+
+      .panel:first-child {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .ui-lang-bar {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .lang-opt {
+        font-size: 12px;
+        padding: 11px 4px;
+        letter-spacing: 0;
+      }
+
+      .swap-btn {
+        padding: 0 12px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- UI Language Toggle -->
+    <div class="ui-lang-bar">
+      <button class="ui-lang-btn active" onclick="setUILang('en')">English</button>
+      <button class="ui-lang-btn" onclick="setUILang('hi')">हिंदी</button>
+      <button class="ui-lang-btn" onclick="setUILang('mr')">मराठी</button>
+    </div>
+
+    <header>
+      <div class="eyebrow" id="ui-eyebrow">Ancient Script Converter</div>
+      <h1>Modi <em>Lipi</em></h1>
+      <div class="rule">
+        <div class="rule-line"></div>
+        <div class="rule-diamond"></div>
+        <div class="rule-line r"></div>
+      </div>
+      <p class="subtitle" id="ui-subtitle">Convert text across scripts — Devanagari, Modi, and English</p>
+    </header>
+
+    <div class="note">
+      <strong id="ui-note-strong">Font required:</strong>
+      <span id="ui-note-text"> Install <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi"
+          target="_blank">Noto Sans Modi</a> from Google Fonts so Modi characters display correctly. Without it you will
+        see empty boxes. &nbsp;|&nbsp; <strong>Tip:</strong> Ctrl+Enter to translate. &nbsp;|&nbsp; English translations
+        use <a href="https://libretranslate.com" target="_blank">LibreTranslate</a> (free &amp; open-source).</span>
+    </div>
+
+    <!-- Translator: language bar + card together -->
+    <div class="translator-wrap">
+
+      <!-- Language Selector Bar -->
+      <div class="lang-bar">
+        <div class="lang-opts" id="src-lang-opts">
+          <button class="lang-opt active" data-lang="deva" onclick="setSrcLang('deva')">Devanagari (मराठी)</button>
+          <button class="lang-opt" data-lang="modi" onclick="setSrcLang('modi')">Modi Lipi</button>
+        </div>
+        <button class="swap-btn" id="swap-btn" onclick="swapLangs()" title="Swap languages">⇄</button>
+        <div class="lang-opts" id="tgt-lang-opts">
+          <button class="lang-opt active" data-lang="modi" onclick="setTgtLang('modi')">Modi Lipi</button>
+          <button class="lang-opt" data-lang="deva" onclick="setTgtLang('deva')">Devanagari (मराठी)</button>
+        </div>
+      </div>
+
+      <!-- Translator Card -->
+      <div class="card">
+        <div class="panel">
+          <div class="panel-head" id="ui-input-head">Input</div>
+          <div class="panel-lang" id="ui-input-lang">Devanagari</div>
+          <textarea id="inp" placeholder="देवनागरी में लिखें…" oninput="updateCount()"></textarea>
+          <div class="bar">
+            <span id="count">0 <span id="ui-chars">characters</span></span>
+            <div class="bar-right">
+              <button class="btn" id="ui-clear-btn" onclick="clearAll()">Clear</button>
+              <button class="btn-go" id="ui-translate-btn" onclick="doTranslate()">Translate</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep">
+          <div class="arrow-circle">⟶</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head" id="ui-output-head">Output</div>
+          <div class="panel-lang" id="ui-output-lang">Modi Lipi</div>
+          <div class="output-body" id="out">
+            <span class="placeholder-text">Modi script will appear here…</span>
+          </div>
+          <div class="bar">
+            <span id="out-info"></span>
+            <div class="bar-right">
+              <button class="btn" id="copy-btn" style="display:none" onclick="copyOut()" data-label="Copy">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.translator-wrap -->
+
+    <!-- Reference Chart -->
+    <details>
+      <summary><span id="ui-ref-title-text">Modi Script Reference Chart (Unicode 17.0)</span></summary>
+      <div class="ref-section-title" id="ui-ref-vowels">Independent Vowels</div>
+      <div class="ref-table" id="ref-vowels"></div>
+      <div class="ref-section-title" id="ui-ref-cons">Consonants</div>
+      <div class="ref-table" id="ref-cons"></div>
+      <div class="ref-section-title" id="ui-ref-matras">Dependent Vowel Signs (Matras)</div>
+      <div class="ref-table" id="ref-matras"></div>
+      <div class="ref-section-title" id="ui-ref-signs">Various Signs &amp; Punctuation</div>
+      <div class="ref-table" id="ref-signs"></div>
+      <div class="ref-section-title" id="ui-ref-digits">Digits</div>
+      <div class="ref-table" id="ref-digits"></div>
+    </details>
+
+    <!-- About Modi Script -->
+    <div class="about-section">
+      <h2>About Modi Script</h2>
+      <p>
+        Modi Lipi (मोडी लिपी) is a historic cursive script that was used to write the Marathi language from at least the
+        12th century until the mid-20th century, when Devanagari became the official script of Maharashtra. The name
+        <em>Modi</em> derives from the Marathi word <em>moḍaṇe</em>, meaning "to bend or fold," reflecting its flowing,
+        connected letterforms. For centuries it was the script of governance, commerce, correspondence, and literature
+        across the Deccan — used in the courts of the Marathas, the Peshwas, and in vast archives of administrative
+        records. Millions of historical documents, land deeds, letters, and manuscripts written in Modi script remain
+        undeciphered today due to a shortage of people who can read it. This translator is a small step toward making
+        the script more accessible, preserving a vital part of Maharashtra's written heritage for future generations.
+      </p>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details class="faq-item">
+        <summary>What is Modi Lipi?</summary>
+        <div class="faq-answer">
+          Modi Lipi is a cursive script historically used to write Marathi, the primary language of Maharashtra, India.
+          It was in active use from around the 12th century until the 1950s, when Devanagari was officially adopted.
+          Modi was especially prominent during the Maratha Empire and Peshwa periods, where it was the script of
+          government, trade, and everyday correspondence.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is Modi script still used today?</summary>
+        <div class="faq-answer">
+          Modi script is no longer used for everyday writing. However, there is a growing revival movement among
+          historians, archivists, linguists, and cultural enthusiasts. Several universities in Maharashtra teach Modi
+          script reading, and organisations like the Bhandarkar Oriental Research Institute in Pune are working to
+          digitise and decode thousands of historical Modi manuscripts. Unicode officially added Modi script in version
+          7.0 (2014), making digital use possible.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I type Modi script on my computer?</summary>
+        <div class="faq-answer">
+          The easiest way is to use this translator — type Devanagari (Marathi) text and it will instantly convert it to
+          Modi Unicode characters. To display Modi correctly, install the <a
+            href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank" style="color:var(--rust)">Noto
+            Sans Modi</a> font on your device. For dedicated typing, some keyboard layouts for Modi script exist but are
+          not yet widely standardised.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How accurate is this Devanagari to Modi converter?</summary>
+        <div class="faq-answer">
+          This tool performs a direct Unicode character-to-character mapping based on the official Unicode Standard 17.0
+          for both Devanagari (U+0900–U+097F) and Modi (U+11600–U+1165F). Every consonant, vowel, vowel sign (matra),
+          virama, anusvara, visarga, punctuation mark, and digit is mapped correctly. It is a script converter, not a
+          translator — meaning it converts the written form of Marathi from one script to another without changing the
+          language itself.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What is the difference between Modi and Devanagari?</summary>
+        <div class="faq-answer">
+          Both scripts are used to write Marathi, but they look very different. Devanagari is block-printed with a
+          characteristic horizontal line (shirorekha) running along the top of letters. Modi is cursive and flowing —
+          letters connect to each other, making it faster to write by hand. Devanagari is shared with Hindi, Sanskrit,
+          Nepali, and other languages, while Modi was uniquely developed for Marathi. Think of them like print vs.
+          cursive handwriting for the same language.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I use this tool for research or academic work?</summary>
+        <div class="faq-answer">
+          Yes. This tool is free to use for personal, educational, and research purposes. The Unicode mappings are
+          sourced directly from the Unicode Standard 17.0, making the output academically reliable for script
+          conversion. If you are working with historical Modi manuscripts, note that older texts may use variant
+          letterforms not fully covered by Unicode — in such cases, specialist scholarship is recommended alongside this
+          tool.
+        </div>
+      </details>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+      <div class="footer-main">© 2025 Modi Lipi Translator — Built to preserve the script of Maharashtra</div>
+      <div class="footer-credits">
+        Unicode mappings sourced from <a href="https://www.unicode.org/charts/" target="_blank">Unicode Standard
+          17.0</a>
+        &nbsp;·&nbsp; Modi script rendered using <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi"
+          target="_blank">Noto Sans Modi</a>
+        &nbsp;·&nbsp; Devanagari rendered using <a href="https://fonts.google.com/noto/specimen/Noto+Serif+Devanagari"
+          target="_blank">Noto Serif Devanagari</a>
+      </div>
+      <div class="footer-tagline">Modi Lipi (मोडी लिपी) was the primary script of Maharashtra from the 12th to 20th
+        century</div>
+      <div class="footer-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+    </div>
+
+  </div><!-- /.page -->
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════
+    // UI LANGUAGE STRINGS
+    // ═══════════════════════════════════════════════════════════════════════
+    const UI = {
+      en: {
+        eyebrow: 'Ancient Script Converter',
+        subtitle: 'Convert text across scripts — Devanagari, Modi, and English',
+        noteStrong: 'Font required:',
+        noteText: ' Install <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> from Google Fonts so Modi characters display correctly. Without it you will see empty boxes. &nbsp;|&nbsp; <strong>Tip:</strong> Ctrl+Enter to translate. &nbsp;|&nbsp; English translations use <a href="https://libretranslate.com" target="_blank">LibreTranslate</a> (free &amp; open-source).',
+        inputHead: 'INPUT',
+        inputLang: 'Devanagari',
+        outputHead: 'OUTPUT',
+        chars: 'characters',
+        placeholder: 'Type or paste text here…',
+        clearBtn: 'Clear',
+        translateBtn: 'Translate',
+        copyBtn: 'Copy',
+        copiedBtn: 'Copied!',
+        outPlaceholder: 'Translation will appear here…',
+        loading: 'Translating…',
+        errConn: 'Translation service unavailable. Please check your connection and try again.',
+        refTitle: 'Modi Script Reference Chart (Unicode 17.0)',
+        refVowels: 'Independent Vowels',
+        refCons: 'Consonants',
+        refMatras: 'Dependent Vowel Signs (Matras)',
+        refSigns: 'Various Signs & Punctuation',
+        refDigits: 'Digits',
+      },
+      hi: {
+        eyebrow: 'प्राचीन लिपि परिवर्तक',
+        subtitle: 'देवनागरी, मोडी लिपि और अंग्रेज़ी के बीच अनुवाद करें',
+        noteStrong: 'फ़ॉन्ट आवश्यक:',
+        noteText: ' मोडी अक्षर सही दिखाने के लिए Google Fonts से <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इंस्टॉल करें। इसके बिना खाली बक्से दिखेंगे। &nbsp;|&nbsp; <strong>सुझाव:</strong> Ctrl+Enter दबाएँ। &nbsp;|&nbsp; अंग्रेज़ी अनुवाद हेतु <a href="https://libretranslate.com" target="_blank">LibreTranslate</a> का उपयोग।',
+        inputHead: 'इनपुट',
+        inputLang: 'देवनागरी',
+        outputHead: 'आउटपुट',
+        chars: 'अक्षर',
+        placeholder: 'यहाँ पाठ लिखें…',
+        clearBtn: 'साफ़ करें',
+        translateBtn: 'अनुवाद करें',
+        copyBtn: 'कॉपी करें',
+        copiedBtn: 'कॉपी हुआ!',
+        outPlaceholder: 'अनुवाद यहाँ दिखेगा…',
+        loading: 'अनुवाद हो रहा है…',
+        errConn: 'सेवा अनुपलब्ध। इंटरनेट जाँचें और पुनः प्रयास करें।',
+        refTitle: 'मोडी लिपि संदर्भ तालिका (Unicode 17.0)',
+        refVowels: 'स्वर',
+        refCons: 'व्यंजन',
+        refMatras: 'मात्राएँ',
+        refSigns: 'विविध चिह्न एवं विराम',
+        refDigits: 'अंक',
+      },
+      mr: {
+        eyebrow: 'प्राचीन लिपी परिवर्तक',
+        subtitle: 'देवनागरी, मोडी लिपी आणि इंग्रजी दरम्यान भाषांतर करा',
+        noteStrong: 'फॉन्ट आवश्यक:',
+        noteText: ' मोडी अक्षरे योग्य दिसण्यासाठी Google Fonts वरून <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इन्स्टॉल करा। त्याशिवाय रिकामी चौकटे दिसतील। &nbsp;|&nbsp; <strong>टीप:</strong> Ctrl+Enter दाबा। &nbsp;|&nbsp; इंग्रजी भाषांतरासाठी <a href="https://libretranslate.com" target="_blank">LibreTranslate</a> वापरले जाते।',
+        inputHead: 'इनपुट',
+        inputLang: 'देवनागरी',
+        outputHead: 'आउटपुट',
+        chars: 'अक्षरे',
+        placeholder: 'येथे मजकूर लिहा…',
+        clearBtn: 'साफ करा',
+        translateBtn: 'भाषांतर करा',
+        copyBtn: 'कॉपी करा',
+        copiedBtn: 'कॉपी झाले!',
+        outPlaceholder: 'भाषांतर येथे दिसेल…',
+        loading: 'भाषांतर होत आहे…',
+        errConn: 'सेवा अनुपलब्ध. इंटरनेट तपासा आणि पुन्हा प्रयत्न करा.',
+        refTitle: 'मोडी लिपी संदर्भ तक्ता (Unicode 17.0)',
+        refVowels: 'स्वर',
+        refCons: 'व्यंजन',
+        refMatras: 'मात्रा',
+        refSigns: 'विविध चिन्हे व विरामचिन्हे',
+        refDigits: 'अंक',
+      }
+    };
+
+    // Language names in all UI languages
+    const LANG_NAMES = {
+      deva: { en: 'Devanagari (Marathi)', hi: 'देवनागरी (मराठी)', mr: 'देवनागरी (मराठी)' },
+      modi: { en: 'Modi Lipi', hi: 'मोडी लिपि', mr: 'मोडी लिपी' },
+    };
+
+    let currentUILang = 'en';
+    let srcLang = 'deva';
+    let tgtLang = 'modi';
+    let lastResult = '';
+
+    function setUILang(lang) {
+      currentUILang = lang;
+      document.querySelectorAll('.ui-lang-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.ui-lang-btn[onclick="setUILang('${lang}')"]`).classList.add('active');
+      const s = UI[lang];
+      const eyebrow = document.getElementById('ui-eyebrow');
+      eyebrow.textContent = s.eyebrow;
+      eyebrow.classList.toggle('deva-mode', lang === 'hi' || lang === 'mr');
+      document.getElementById('ui-subtitle').textContent = s.subtitle;
+      document.getElementById('ui-note-strong').textContent = s.noteStrong;
+      document.getElementById('ui-note-text').innerHTML = s.noteText;
+      document.getElementById('ui-input-head').textContent = s.inputHead;
+      document.getElementById('ui-output-head').textContent = s.outputHead;
+      document.getElementById('ui-chars').textContent = s.chars;
+      document.getElementById('inp').placeholder = s.placeholder;
+      document.getElementById('ui-clear-btn').textContent = s.clearBtn;
+      document.getElementById('ui-translate-btn').textContent = s.translateBtn;
+      document.getElementById('ui-ref-title-text').textContent = s.refTitle;
+      document.getElementById('ui-ref-vowels').textContent = s.refVowels;
+      document.getElementById('ui-ref-cons').textContent = s.refCons;
+      document.getElementById('ui-ref-matras').textContent = s.refMatras;
+      document.getElementById('ui-ref-signs').textContent = s.refSigns;
+      document.getElementById('ui-ref-digits').textContent = s.refDigits;
+      const copyBtn = document.getElementById('copy-btn');
+      copyBtn.dataset.label = s.copyBtn;
+      if (copyBtn.textContent !== s.copiedBtn) copyBtn.textContent = s.copyBtn;
+      const ph = document.getElementById('out').querySelector('.placeholder-text');
+      if (ph) ph.textContent = s.outPlaceholder;
+      updateLangBar();
+    }
+
+    // ── Language bar logic ────────────────────────────────────────────────────
+    const ALL_LANGS = ['deva', 'modi'];
+
+    function updateLangBar() {
+      const uiL = currentUILang;
+      ALL_LANGS.forEach(lang => {
+        const srcBtn = document.querySelector(`#src-lang-opts [data-lang="${lang}"]`);
+        const tgtBtn = document.querySelector(`#tgt-lang-opts [data-lang="${lang}"]`);
+        if (srcBtn) {
+          srcBtn.textContent = LANG_NAMES[lang][uiL];
+          srcBtn.classList.toggle('active', lang === srcLang);
+        }
+        if (tgtBtn) {
+          tgtBtn.textContent = LANG_NAMES[lang][uiL];
+          tgtBtn.classList.toggle('active', lang === tgtLang);
+        }
+      });
+      document.getElementById('ui-input-lang').textContent = LANG_NAMES[srcLang][uiL];
+      document.getElementById('ui-output-lang').textContent = LANG_NAMES[tgtLang][uiL];
+    }
+
+    function setSrcLang(lang) {
+      if (lang === srcLang) return;
+      if (lang === tgtLang) tgtLang = srcLang; // auto-swap target
+      srcLang = lang;
+      clearOutput();
+      updateLangBar();
+    }
+
+    function setTgtLang(lang) {
+      if (lang === tgtLang) return;
+      if (lang === srcLang) srcLang = tgtLang; // auto-swap source
+      tgtLang = lang;
+      clearOutput();
+      updateLangBar();
+    }
+
+    function swapLangs() {
+      [srcLang, tgtLang] = [tgtLang, srcLang];
+      // Move translated output back to input
+      if (lastResult) {
+        document.getElementById('inp').value = lastResult;
+        updateCount();
+      }
+      clearOutput();
+      updateLangBar();
+      // Animate button
+      const btn = document.getElementById('swap-btn');
+      btn.classList.remove('spin');
+      void btn.offsetWidth; // reflow
+      btn.classList.add('spin');
+      setTimeout(() => btn.classList.remove('spin'), 400);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // COMPLETE DEVANAGARI ↔ MODI MAPPING  (Unicode Standard 17.0)
+    // ═══════════════════════════════════════════════════════════════════════
+
+    const INDEPENDENT_VOWELS = [
+      [0x11600, 'अ', 0x0905, 'A'],
+      [0x11601, 'आ', 0x0906, 'AA'],
+      [0x11602, 'इ', 0x0907, 'I'],
+      [0x11603, 'ई', 0x0908, 'II'],
+      [0x11604, 'उ', 0x0909, 'U'],
+      [0x11605, 'ऊ', 0x090A, 'UU'],
+      [0x11606, 'ऋ', 0x090B, 'Voc.R'],
+      [0x11607, 'ॠ', 0x0960, 'Voc.RR'],
+      [0x11608, 'ऌ', 0x090C, 'Voc.L'],
+      [0x11609, 'ॡ', 0x0961, 'Voc.LL'],
+      [0x1160A, 'ए', 0x090F, 'E'],
+      [0x1160B, 'ऐ', 0x0910, 'AI'],
+      [0x1160C, 'ओ', 0x0913, 'O'],
+      [0x1160D, 'औ', 0x0914, 'AU'],
+    ];
+
+    const CONSONANTS = [
+      [0x1160E, 'क', 0x0915, 'KA'],
+      [0x1160F, 'ख', 0x0916, 'KHA'],
+      [0x11610, 'ग', 0x0917, 'GA'],
+      [0x11611, 'घ', 0x0918, 'GHA'],
+      [0x11612, 'ङ', 0x0919, 'NGA'],
+      [0x11613, 'च', 0x091A, 'CA'],
+      [0x11614, 'छ', 0x091B, 'CHA'],
+      [0x11615, 'ज', 0x091C, 'JA'],
+      [0x11616, 'झ', 0x091D, 'JHA'],
+      [0x11617, 'ञ', 0x091E, 'NYA'],
+      [0x11618, 'ट', 0x091F, 'TTA'],
+      [0x11619, 'ठ', 0x0920, 'TTHA'],
+      [0x1161A, 'ड', 0x0921, 'DDA'],
+      [0x1161B, 'ढ', 0x0922, 'DDHA'],
+      [0x1161C, 'ण', 0x0923, 'NNA'],
+      [0x1161D, 'त', 0x0924, 'TA'],
+      [0x1161E, 'थ', 0x0925, 'THA'],
+      [0x1161F, 'द', 0x0926, 'DA'],
+      [0x11620, 'ध', 0x0927, 'DHA'],
+      [0x11621, 'न', 0x0928, 'NA'],
+      [0x11622, 'प', 0x092A, 'PA'],
+      [0x11623, 'फ', 0x092B, 'PHA'],
+      [0x11624, 'ब', 0x092C, 'BA'],
+      [0x11625, 'भ', 0x092D, 'BHA'],
+      [0x11626, 'म', 0x092E, 'MA'],
+      [0x11627, 'य', 0x092F, 'YA'],
+      [0x11628, 'र', 0x0930, 'RA'],
+      [0x11629, 'ल', 0x0932, 'LA'],
+      [0x1162A, 'व', 0x0935, 'VA'],
+      [0x1162B, 'श', 0x0936, 'SHA'],
+      [0x1162C, 'ष', 0x0937, 'SSA'],
+      [0x1162D, 'स', 0x0938, 'SA'],
+      [0x1162E, 'ह', 0x0939, 'HA'],
+      [0x1162F, 'ळ', 0x0933, 'LLA'],
+    ];
+
+    const DEP_VOWEL_SIGNS = [
+      [0x11630, 0x093E, 'AA ा'],
+      [0x11631, 0x093F, 'I ि'],
+      [0x11632, 0x0940, 'II ी'],
+      [0x11633, 0x0941, 'U ु'],
+      [0x11634, 0x0942, 'UU ू'],
+      [0x11635, 0x0943, 'Voc.R ृ'],
+      [0x11636, 0x0944, 'Voc.RR ॄ'],
+      [0x11637, 0x0962, 'Voc.L ॢ'],
+      [0x11638, 0x0963, 'Voc.LL ॣ'],
+      [0x11639, 0x0947, 'E े'],
+      [0x1163A, 0x0948, 'AI ै'],
+      [0x1163B, 0x094B, 'O ो'],
+      [0x1163C, 0x094C, 'AU ौ'],
+    ];
+
+    const VARIOUS_SIGNS = [
+      [0x1163D, 0x0902, 'Anusvara ं'],
+      [0x1163E, 0x0903, 'Visarga ः'],
+      [0x1163F, 0x094D, 'Virama ्'],
+      [0x11640, 0x0901, 'Ardhacandra ँ'],
+    ];
+
+    const PUNCTUATION = [
+      [0x11641, 0x0964, 'Danda ।'],
+      [0x11642, 0x0965, 'Dbl Danda ॥'],
+      [0x11643, null, 'Abbrev.'],
+      [0x11644, null, 'Huva'],
+    ];
+
+    const DIGITS = [
+      [0x11650, 0x0966, '0 ०'],
+      [0x11651, 0x0967, '1 १'],
+      [0x11652, 0x0968, '2 २'],
+      [0x11653, 0x0969, '3 ३'],
+      [0x11654, 0x096A, '4 ४'],
+      [0x11655, 0x096B, '5 ५'],
+      [0x11656, 0x096C, '6 ६'],
+      [0x11657, 0x096D, '7 ७'],
+      [0x11658, 0x096E, '8 ८'],
+      [0x11659, 0x096F, '9 ९'],
+    ];
+
+    // ── Build D2M: Devanagari codepoint → Modi char ───────────────────────────
+    const D2M = {};
+    for (const [mcp, , dcp] of INDEPENDENT_VOWELS) { if (dcp) D2M[dcp] = String.fromCodePoint(mcp); }
+    for (const [mcp, , dcp] of CONSONANTS) { if (dcp) D2M[dcp] = String.fromCodePoint(mcp); }
+    for (const [mcp, dcp] of DEP_VOWEL_SIGNS) { if (dcp) D2M[dcp] = String.fromCodePoint(mcp); }
+    for (const [mcp, dcp] of VARIOUS_SIGNS) { if (dcp) D2M[dcp] = String.fromCodePoint(mcp); }
+    for (const [mcp, dcp] of PUNCTUATION) { if (dcp) D2M[dcp] = String.fromCodePoint(mcp); }
+    for (const [mcp, dcp] of DIGITS) { if (dcp) D2M[dcp] = String.fromCodePoint(mcp); }
+    for (let i = 0; i <= 9; i++) D2M[String(i)] = String.fromCodePoint(0x11650 + i);
+
+    // ── Build M2D: Modi codepoint → Devanagari char (reverse) ────────────────
+    const M2D = {};
+    for (const [mcp, , dcp] of INDEPENDENT_VOWELS) { if (dcp) M2D[mcp] = String.fromCodePoint(dcp); }
+    for (const [mcp, , dcp] of CONSONANTS) { if (dcp) M2D[mcp] = String.fromCodePoint(dcp); }
+    for (const [mcp, dcp] of DEP_VOWEL_SIGNS) { if (dcp) M2D[mcp] = String.fromCodePoint(dcp); }
+    for (const [mcp, dcp] of VARIOUS_SIGNS) { if (dcp) M2D[mcp] = String.fromCodePoint(dcp); }
+    for (const [mcp, dcp] of PUNCTUATION) { if (dcp) M2D[mcp] = String.fromCodePoint(dcp); }
+    for (const [mcp, dcp] of DIGITS) { if (dcp) M2D[mcp] = String.fromCodePoint(dcp); }
+    // Modi digits → Devanagari digits
+    for (let i = 0; i <= 9; i++) M2D[0x11650 + i] = String.fromCodePoint(0x0966 + i);
+
+    // ── Converters ────────────────────────────────────────────────────────────
+    function devanagariToModi(text) {
+      let out = '';
+      for (const ch of text) {
+        const cp = ch.codePointAt(0);
+        if (D2M[cp] !== undefined) out += D2M[cp];
+        else if (D2M[ch] !== undefined) out += D2M[ch];
+        else out += ch;
+      }
+      return out;
+    }
+
+    function modiToDevanagari(text) {
+      let out = '';
+      for (const ch of text) {
+        const cp = ch.codePointAt(0);
+        if (M2D[cp] !== undefined) out += M2D[cp];
+        else out += ch;
+      }
+      return out;
+    }
+
+    // ── LibreTranslate ────────────────────────────────────────────────────────
+    const LT_ENDPOINTS = [
+      'https://translate.argosopentech.com/translate',
+      'https://libretranslate.de/translate',
+      'https://lt.vern.cc/translate',
+    ];
+
+    async function translateViaLibre(text, src, tgt) {
+      const body = JSON.stringify({ q: text, source: src, target: tgt, format: 'text' });
+      for (const url of LT_ENDPOINTS) {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 9000);
+        try {
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body,
+            signal: controller.signal,
+          });
+          clearTimeout(tid);
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data.translatedText) return data.translatedText;
+        } catch (e) {
+          clearTimeout(tid);
+          // try next endpoint
+        }
+      }
+      throw new Error(UI[currentUILang].errConn);
+    }
+
+    // ── Main translate handler ────────────────────────────────────────────────
+    async function doTranslate() {
+      const text = document.getElementById('inp').value;
+      if (!text.trim()) return;
+      if (srcLang === tgtLang) { showResult(text, tgtLang); return; }
+
+      setLoading(true);
+      try {
+        let result = '';
+
+        if (srcLang === 'deva' && tgtLang === 'modi') {
+          result = devanagariToModi(text);
+        } else if (srcLang === 'modi' && tgtLang === 'deva') {
+          result = modiToDevanagari(text);
+        }
+
+        showResult(result, tgtLang);
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // ── UI helpers ────────────────────────────────────────────────────────────
+    function setLoading(on) {
+      const btn = document.getElementById('ui-translate-btn');
+      btn.disabled = on;
+      if (on) {
+        const s = UI[currentUILang];
+        document.getElementById('out').innerHTML =
+          `<div class="loading-state"><div class="spinner"></div>${s.loading}</div>`;
+        document.getElementById('copy-btn').style.display = 'none';
+        document.getElementById('out-info').textContent = '';
+      }
+    }
+
+    function showResult(text, lang) {
+      lastResult = text;
+      const outEl = document.getElementById('out');
+      outEl.innerHTML = '';
+      const div = document.createElement('div');
+      div.className = 'modi-out';
+      if (lang === 'modi') {
+        div.style.cssText = "font-family:'Noto Sans Modi','Segoe UI Historic',serif;font-size:24px;line-height:2;";
+      } else if (lang === 'deva') {
+        div.style.cssText = "font-family:'Noto Serif Devanagari',serif;font-size:22px;line-height:1.9;";
+      } else {
+        div.style.cssText = "font-family:'Crimson Pro',Georgia,serif;font-size:18px;line-height:1.7;";
+      }
+      div.textContent = text;
+      outEl.appendChild(div);
+      const s = UI[currentUILang];
+      document.getElementById('out-info').textContent = text.length + ' ' + s.chars;
+      const cb = document.getElementById('copy-btn');
+      cb.style.display = 'inline-block';
+      cb.textContent = s.copyBtn;
+      cb.dataset.label = s.copyBtn;
+    }
+
+    function showError(msg) {
+      document.getElementById('out').innerHTML = `<div class="error-state">${msg}</div>`;
+    }
+
+    function clearOutput() {
+      lastResult = '';
+      const s = UI[currentUILang];
+      document.getElementById('out').innerHTML =
+        `<span class="placeholder-text">${s.outPlaceholder}</span>`;
+      document.getElementById('out-info').textContent = '';
+      document.getElementById('copy-btn').style.display = 'none';
+    }
+
+    function clearAll() {
+      document.getElementById('inp').value = '';
+      updateCount();
+      clearOutput();
+    }
+
+    function updateCount() {
+      const n = document.getElementById('inp').value.length;
+      document.getElementById('count').innerHTML =
+        n + ' <span id="ui-chars">' + UI[currentUILang].chars + '</span>';
+    }
+
+    function copyOut() {
+      if (!lastResult) return;
+      navigator.clipboard.writeText(lastResult).then(() => {
+        const b = document.getElementById('copy-btn');
+        b.textContent = UI[currentUILang].copiedBtn;
+        setTimeout(() => b.textContent = b.dataset.label, 2000);
+      });
+    }
+
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') doTranslate();
+    });
+
+    // ── Build reference chart ─────────────────────────────────────────────────
+    const MF = "font-family:'Noto Sans Modi','Segoe UI Historic',serif";
+
+    function makeCell(modiCp, devaDisplay, romLabel) {
+      const c = document.createElement('div');
+      c.className = 'ref-cell';
+      c.innerHTML =
+        `<span class="ref-modi" style="${MF}">${String.fromCodePoint(modiCp)}</span>` +
+        `<span class="ref-deva">${devaDisplay}</span>` +
+        `<span class="ref-rom">${romLabel}</span>`;
+      return c;
+    }
+
+    const rv = document.getElementById('ref-vowels');
+    for (const [mcp, deva, , label] of INDEPENDENT_VOWELS) rv.appendChild(makeCell(mcp, deva, label));
+
+    const rc = document.getElementById('ref-cons');
+    for (const [mcp, deva, , label] of CONSONANTS) rc.appendChild(makeCell(mcp, deva, label));
+
+    const rm = document.getElementById('ref-matras');
+    for (const [mcp, dcp, label] of DEP_VOWEL_SIGNS) {
+      const ka = String.fromCodePoint(0x1160E);
+      const c = document.createElement('div');
+      c.className = 'ref-cell';
+      c.innerHTML =
+        `<span class="ref-modi" style="${MF}">${ka}${String.fromCodePoint(mcp)}</span>` +
+        `<span class="ref-deva">क${String.fromCodePoint(dcp)}</span>` +
+        `<span class="ref-rom">${label}</span>`;
+      rm.appendChild(c);
+    }
+
+    const rs = document.getElementById('ref-signs');
+    for (const [mcp, dcp, label] of [...VARIOUS_SIGNS, ...PUNCTUATION]) {
+      rs.appendChild(makeCell(mcp, dcp ? String.fromCodePoint(dcp) : '—', label));
+    }
+
+    const rd = document.getElementById('ref-digits');
+    for (const [mcp, dcp, label] of DIGITS) rd.appendChild(makeCell(mcp, String.fromCodePoint(dcp), label));
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    updateLangBar();
+  </script>
 </body>
+
 </html>

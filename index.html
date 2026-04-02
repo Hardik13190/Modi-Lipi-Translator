@@ -293,11 +293,11 @@
 
     textarea {
       flex: 1;
-      min-height: 210px;
+      min-height: 260px;
       padding: 18px;
       border: none;
       background: transparent;
-      font-family: 'Laila', 'Crimson Pro', serif;
+      font-family: 'Laila', serif;
       font-size: 18px;
       color: var(--ink);
       resize: none;
@@ -308,6 +308,41 @@
     textarea::placeholder {
       color: rgba(26, 15, 10, .28);
       font-style: italic;
+    }
+
+    /* Apply Laila to ALL Devanagari content site-wide */
+    .ref-deva,
+    .faq-answer,
+    .faq-item summary,
+    .about-section p,
+    .about-section h2,
+    .faq-section h2,
+    .note,
+    .subtitle,
+    .ui-lang-btn,
+    .panel-head,
+    .lang-fixed,
+    .eyebrow {
+      font-family: 'Laila', 'Cormorant Garamond', serif;
+    }
+
+    /* Override: headings stay Cormorant when in English */
+    .about-section h2,
+    .faq-section h2 {
+      font-family: 'Cormorant Garamond', 'Laila', serif;
+    }
+
+    /* 2. Fix ref-section-title letter-spacing for Devanagari labels */
+    .ref-section-title {
+      letter-spacing: .25em;
+      text-transform: uppercase;
+    }
+
+    .ref-section-title.deva-label {
+      letter-spacing: 0.05em;
+      text-transform: none;
+      font-family: 'Laila', serif;
+      font-size: 12px;
     }
 
     .sep {
@@ -322,7 +357,7 @@
 
     .output-body {
       flex: 1;
-      min-height: 210px;
+      min-height: 260px;
       padding: 18px;
       font-size: 22px;
       line-height: 1.9;
@@ -769,7 +804,6 @@
       <div class="card">
         <div class="panel">
           <div class="panel-head" id="ui-input-head">Input</div>
-          <div class="panel-lang" id="ui-input-lang">Devanagari</div>
           <textarea id="inp" placeholder="देवनागरी में लिखें…" oninput="updateCount()"></textarea>
           <div class="bar">
             <span id="count">0 <span id="ui-chars">characters</span></span>
@@ -786,7 +820,6 @@
 
         <div class="panel">
           <div class="panel-head" id="ui-output-head">Output</div>
-          <div class="panel-lang" id="ui-output-lang">Modi Lipi</div>
           <div class="output-body" id="out">
             <span class="placeholder-text">Modi script will appear here…</span>
           </div>
@@ -1039,6 +1072,9 @@
       // Fix panel-head letter-spacing for Devanagari UI
       const heads = document.querySelectorAll('.panel-head');
       heads.forEach(h => h.classList.toggle('deva-mode', lang === 'hi' || lang === 'mr'));
+      // Fix ref-section-title letter-spacing for Devanagari UI
+      const refTitles = document.querySelectorAll('.ref-section-title');
+      refTitles.forEach(t => t.classList.toggle('deva-label', lang === 'hi' || lang === 'mr'));
       updateLangBar();
       updateAboutFAQ(lang);
     }
@@ -1047,8 +1083,6 @@
       const uiL = currentUILang;
       document.getElementById('src-label').textContent = LANG_NAMES[srcLang][uiL];
       document.getElementById('tgt-label').textContent = LANG_NAMES[tgtLang][uiL];
-      document.getElementById('ui-input-lang').textContent = LANG_NAMES[srcLang][uiL];
-      document.getElementById('ui-output-lang').textContent = LANG_NAMES[tgtLang][uiL];
       // input head
       const inputHead = document.getElementById('ui-input-head');
       inputHead.textContent = UI[uiL].inputHead;

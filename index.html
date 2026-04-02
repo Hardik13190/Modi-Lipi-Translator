@@ -19,7 +19,7 @@
     content="Modi Lipi, Modi script translator, Devanagari to Modi, Marathi Modi script, Hindi to Modi converter">
   <title>Modi Lipi Translator | Devanagari to Modi Converter</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Crimson+Pro:wght@300;400&family=Noto+Serif+Devanagari:wght@300;400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Crimson+Pro:wght@300;400&family=Laila:wght@300;400;500&display=swap"
     rel="stylesheet">
   <style>
     :root {
@@ -191,7 +191,7 @@
       margin-bottom: 24px;
     }
 
-    /* ── Language Bar (Google Translate style) ── */
+    /* ── Language Bar ── */
     .lang-bar {
       display: flex;
       align-items: stretch;
@@ -199,50 +199,18 @@
       background: rgba(255, 255, 255, .5);
     }
 
-    .lang-opts {
-      display: flex;
+    .lang-fixed {
       flex: 1;
-    }
-
-    .lang-opt {
-      flex: 1;
-      padding: 13px 6px;
-      border: none;
-      border-right: 1px solid var(--border);
-      background: transparent;
-      cursor: pointer;
+      padding: 14px 18px;
       font-family: 'Cormorant Garamond', serif;
-      font-size: 14px;
-      font-weight: 400;
-      color: rgba(26, 15, 10, .45);
-      letter-spacing: .04em;
-      transition: all .2s;
-      position: relative;
-    }
-
-    .lang-opt:last-child {
-      border-right: none;
-    }
-
-    .lang-opt:hover {
-      color: var(--rust);
-      background: rgba(196, 146, 42, .07);
-    }
-
-    .lang-opt.active {
-      color: var(--ink);
+      font-size: 15px;
       font-weight: 600;
-      background: rgba(255, 255, 255, .8);
-    }
-
-    .lang-opt.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--rust);
+      color: var(--ink);
+      letter-spacing: .03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
     /* ── Swap Button ── */
@@ -306,6 +274,13 @@
       background: rgba(196, 146, 42, .06);
     }
 
+    .panel-head.deva-mode {
+      letter-spacing: 0;
+      text-transform: none;
+      font-size: 12px;
+      font-family: 'Laila', serif;
+    }
+
     .panel-lang {
       padding: 5px 18px 10px;
       font-family: 'Cormorant Garamond', serif;
@@ -322,7 +297,7 @@
       padding: 18px;
       border: none;
       background: transparent;
-      font-family: 'Noto Serif Devanagari', 'Crimson Pro', serif;
+      font-family: 'Laila', 'Crimson Pro', serif;
       font-size: 18px;
       color: var(--ink);
       resize: none;
@@ -785,15 +760,9 @@
 
       <!-- Language Selector Bar -->
       <div class="lang-bar">
-        <div class="lang-opts" id="src-lang-opts">
-          <button class="lang-opt active" data-lang="deva" onclick="setSrcLang('deva')">Devanagari (मराठी)</button>
-          <button class="lang-opt" data-lang="modi" onclick="setSrcLang('modi')">Modi Lipi</button>
-        </div>
+        <div class="lang-fixed" id="src-label">Devanagari (मराठी)</div>
         <button class="swap-btn" id="swap-btn" onclick="swapLangs()" title="Swap languages">⇄</button>
-        <div class="lang-opts" id="tgt-lang-opts">
-          <button class="lang-opt active" data-lang="modi" onclick="setTgtLang('modi')">Modi Lipi</button>
-          <button class="lang-opt" data-lang="deva" onclick="setTgtLang('deva')">Devanagari (मराठी)</button>
-        </div>
+        <div class="lang-fixed" id="tgt-label">Modi Lipi</div>
       </div>
 
       <!-- Translator Card -->
@@ -940,8 +909,8 @@
           17.0</a>
         &nbsp;·&nbsp; Modi script rendered using <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi"
           target="_blank">Noto Sans Modi</a>
-        &nbsp;·&nbsp; Devanagari rendered using <a href="https://fonts.google.com/noto/specimen/Noto+Serif+Devanagari"
-          target="_blank">Noto Serif Devanagari</a>
+        &nbsp;·&nbsp; Devanagari rendered using <a href="https://fonts.google.com/specimen/Laila"
+          target="_blank">Laila</a>
       </div>
       <div class="footer-tagline">Modi Lipi (मोडी लिपी) was the primary script of Maharashtra from the 12th to 20th
         century</div>
@@ -1051,7 +1020,6 @@
       document.getElementById('ui-subtitle').textContent = s.subtitle;
       document.getElementById('ui-note-strong').textContent = s.noteStrong;
       document.getElementById('ui-note-text').innerHTML = s.noteText;
-      document.getElementById('ui-input-head').textContent = s.inputHead;
       document.getElementById('ui-output-head').textContent = s.outputHead;
       document.getElementById('ui-chars').textContent = s.chars;
       document.getElementById('inp').placeholder = s.placeholder;
@@ -1068,61 +1036,97 @@
       if (copyBtn.textContent !== s.copiedBtn) copyBtn.textContent = s.copyBtn;
       const ph = document.getElementById('out').querySelector('.placeholder-text');
       if (ph) ph.textContent = s.outPlaceholder;
+      // Fix panel-head letter-spacing for Devanagari UI
+      const heads = document.querySelectorAll('.panel-head');
+      heads.forEach(h => h.classList.toggle('deva-mode', lang === 'hi' || lang === 'mr'));
       updateLangBar();
+      updateAboutFAQ(lang);
     }
-
-    // ── Language bar logic ────────────────────────────────────────────────────
-    const ALL_LANGS = ['deva', 'modi'];
 
     function updateLangBar() {
       const uiL = currentUILang;
-      ALL_LANGS.forEach(lang => {
-        const srcBtn = document.querySelector(`#src-lang-opts [data-lang="${lang}"]`);
-        const tgtBtn = document.querySelector(`#tgt-lang-opts [data-lang="${lang}"]`);
-        if (srcBtn) {
-          srcBtn.textContent = LANG_NAMES[lang][uiL];
-          srcBtn.classList.toggle('active', lang === srcLang);
-        }
-        if (tgtBtn) {
-          tgtBtn.textContent = LANG_NAMES[lang][uiL];
-          tgtBtn.classList.toggle('active', lang === tgtLang);
-        }
-      });
+      document.getElementById('src-label').textContent = LANG_NAMES[srcLang][uiL];
+      document.getElementById('tgt-label').textContent = LANG_NAMES[tgtLang][uiL];
       document.getElementById('ui-input-lang').textContent = LANG_NAMES[srcLang][uiL];
       document.getElementById('ui-output-lang').textContent = LANG_NAMES[tgtLang][uiL];
-    }
-
-    function setSrcLang(lang) {
-      if (lang === srcLang) return;
-      if (lang === tgtLang) tgtLang = srcLang; // auto-swap target
-      srcLang = lang;
-      clearOutput();
-      updateLangBar();
-    }
-
-    function setTgtLang(lang) {
-      if (lang === tgtLang) return;
-      if (lang === srcLang) srcLang = tgtLang; // auto-swap source
-      tgtLang = lang;
-      clearOutput();
-      updateLangBar();
+      // input head
+      const inputHead = document.getElementById('ui-input-head');
+      inputHead.textContent = UI[uiL].inputHead;
+      inputHead.classList.toggle('deva-mode', uiL === 'hi' || uiL === 'mr');
     }
 
     function swapLangs() {
       [srcLang, tgtLang] = [tgtLang, srcLang];
-      // Move translated output back to input
       if (lastResult) {
         document.getElementById('inp').value = lastResult;
         updateCount();
       }
       clearOutput();
       updateLangBar();
-      // Animate button
       const btn = document.getElementById('swap-btn');
       btn.classList.remove('spin');
-      void btn.offsetWidth; // reflow
+      void btn.offsetWidth;
       btn.classList.add('spin');
       setTimeout(() => btn.classList.remove('spin'), 400);
+    }
+
+    // ── About & FAQ multilingual content ─────────────────────────────────────
+    const ABOUT_CONTENT = {
+      en: {
+        aboutTitle: 'About Modi Script',
+        aboutText: `Modi Lipi (मोडी लिपी) is a historic cursive script that was used to write the Marathi language from at least the 12th century until the mid-20th century, when Devanagari became the official script of Maharashtra. The name <em>Modi</em> derives from the Marathi word <em>moḍaṇe</em>, meaning "to bend or fold," reflecting its flowing, connected letterforms. For centuries it was the script of governance, commerce, correspondence, and literature across the Deccan — used in the courts of the Marathas, the Peshwas, and in vast archives of administrative records. Millions of historical documents, land deeds, letters, and manuscripts written in Modi script remain undeciphered today due to a shortage of people who can read it. This translator is a small step toward making the script more accessible, preserving a vital part of Maharashtra's written heritage for future generations.`,
+        faqTitle: 'Frequently Asked Questions',
+        faqs: [
+          { q: 'What is Modi Lipi?', a: 'Modi Lipi is a cursive script historically used to write Marathi, the primary language of Maharashtra, India. It was in active use from around the 12th century until the 1950s, when Devanagari was officially adopted. Modi was especially prominent during the Maratha Empire and Peshwa periods, where it was the script of government, trade, and everyday correspondence.' },
+          { q: 'Is Modi script still used today?', a: 'Modi script is no longer used for everyday writing. However, there is a growing revival movement among historians, archivists, linguists, and cultural enthusiasts. Several universities in Maharashtra teach Modi script reading, and organisations like the Bhandarkar Oriental Research Institute in Pune are working to digitise and decode thousands of historical Modi manuscripts. Unicode officially added Modi script in version 7.0 (2014), making digital use possible.' },
+          { q: 'How do I type Modi script on my computer?', a: 'The easiest way is to use this translator — type Devanagari (Marathi) text and it will instantly convert it to Modi Unicode characters. To display Modi correctly, install the <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank" style="color:var(--rust)">Noto Sans Modi</a> font on your device. For dedicated typing, some keyboard layouts for Modi script exist but are not yet widely standardised.' },
+          { q: 'How accurate is this Devanagari to Modi converter?', a: 'This tool performs a direct Unicode character-to-character mapping based on the official Unicode Standard 17.0 for both Devanagari (U+0900–U+097F) and Modi (U+11600–U+1165F). Every consonant, vowel, vowel sign (matra), virama, anusvara, visarga, punctuation mark, and digit is mapped correctly. It is a script converter, not a translator — meaning it converts the written form of Marathi from one script to another without changing the language itself.' },
+          { q: 'What is the difference between Modi and Devanagari?', a: 'Both scripts are used to write Marathi, but they look very different. Devanagari is block-printed with a characteristic horizontal line (shirorekha) running along the top of letters. Modi is cursive and flowing — letters connect to each other, making it faster to write by hand. Devanagari is shared with Hindi, Sanskrit, Nepali, and other languages, while Modi was uniquely developed for Marathi.' },
+          { q: 'Can I use this tool for research or academic work?', a: 'Yes. This tool is free to use for personal, educational, and research purposes. The Unicode mappings are sourced directly from the Unicode Standard 17.0, making the output academically reliable for script conversion. If you are working with historical Modi manuscripts, note that older texts may use variant letterforms not fully covered by Unicode — in such cases, specialist scholarship is recommended alongside this tool.' },
+        ]
+      },
+      hi: {
+        aboutTitle: 'मोडी लिपि के बारे में',
+        aboutText: `मोडी लिपि (मोडी लिपी) एक ऐतिहासिक चलित लिपि है जिसका उपयोग कम से कम 12वीं शताब्दी से लेकर 20वीं शताब्दी के मध्य तक मराठी भाषा लिखने के लिए किया जाता था, जब देवनागरी को महाराष्ट्र की आधिकारिक लिपि घोषित किया गया। <em>मोडी</em> नाम मराठी शब्द <em>मोडणे</em> से आया है, जिसका अर्थ है "मोड़ना"। सदियों तक यह दक्कन क्षेत्र में शासन, व्यापार, पत्राचार और साहित्य की लिपि रही — मराठा दरबारों, पेशवाओं और विशाल प्रशासनिक अभिलेखागारों में इसका उपयोग होता था। आज लाखों ऐतिहासिक दस्तावेज़ और पांडुलिपियाँ अपठित हैं। यह अनुवादक उस लिपि को अधिक सुलभ बनाने की एक कोशिश है।`,
+        faqTitle: 'अक्सर पूछे जाने वाले प्रश्न',
+        faqs: [
+          { q: 'मोडी लिपि क्या है?', a: 'मोडी लिपि एक चलित लिपि है जो ऐतिहासिक रूप से महाराष्ट्र की भाषा मराठी लिखने के लिए प्रयुक्त थी। यह 12वीं शताब्दी से 1950 के दशक तक उपयोग में रही। मराठा साम्राज्य और पेशवाकाल में यह शासन, व्यापार और पत्राचार की लिपि थी।' },
+          { q: 'क्या मोडी लिपि आज भी प्रयोग में है?', a: 'मोडी लिपि अब दैनिक लेखन में उपयोग नहीं होती। परंतु इतिहासकारों और सांस्कृतिक उत्साहियों के बीच इसके पुनरुद्धार का आंदोलन बढ़ रहा है। Unicode ने 2014 में संस्करण 7.0 में मोडी लिपि को आधिकारिक रूप से शामिल किया।' },
+          { q: 'कंप्यूटर पर मोडी लिपि में कैसे टाइप करें?', a: 'सबसे आसान तरीका यह अनुवादक है — देवनागरी में टाइप करें और यह तुरंत मोडी Unicode में रूपांतरित हो जाएगा। मोडी अक्षर सही दिखाने के लिए <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank" style="color:var(--rust)">Noto Sans Modi</a> फ़ॉन्ट इंस्टॉल करें।' },
+          { q: 'यह रूपांतरण कितना सटीक है?', a: 'यह उपकरण Unicode Standard 17.0 के अनुसार सीधे वर्ण-से-वर्ण मानचित्रण करता है। प्रत्येक व्यंजन, स्वर, मात्रा और विराम चिह्न सही ढंग से मानचित्रित हैं। यह एक लिपि परिवर्तक है, अनुवादक नहीं।' },
+          { q: 'मोडी और देवनागरी में क्या अंतर है?', a: 'देवनागरी में अक्षरों के ऊपर शिरोरेखा होती है। मोडी चलित और प्रवाहमान है — अक्षर एक-दूसरे से जुड़े होते हैं। देवनागरी कई भाषाओं में प्रयुक्त होती है, जबकि मोडी विशेष रूप से मराठी के लिए विकसित हुई।' },
+          { q: 'क्या इसे शोध कार्य के लिए उपयोग कर सकते हैं?', a: 'हाँ। यह उपकरण व्यक्तिगत और शोध उद्देश्यों के लिए निःशुल्क है। ऐतिहासिक पांडुलिपियों के लिए, जहाँ पुराने अक्षर-रूप हों, विशेषज्ञ परामर्श की सलाह है।' },
+        ]
+      },
+      mr: {
+        aboutTitle: 'मोडी लिपीबद्दल',
+        aboutText: `मोडी लिपी ही एक ऐतिहासिक जोडाक्षरी लिपी आहे जी किमान १२व्या शतकापासून ते २०व्या शतकाच्या मध्यापर्यंत मराठी भाषा लिहिण्यासाठी वापरली जात होती, जेव्हा देवनागरी महाराष्ट्राची अधिकृत लिपी झाली. <em>मोडी</em> हे नाव मराठी शब्द <em>मोडणे</em> यावरून आले आहे. शतकानुशतके ती मराठा दरबार, पेशवे आणि प्रशासनाची लिपी होती. आज लाखो ऐतिहासिक कागदपत्रे अद्याप उलगडलेली नाहीत. हा अनुवादक ती लिपी अधिक सुलभ करण्याचा एक प्रयत्न आहे.`,
+        faqTitle: 'वारंवार विचारले जाणारे प्रश्न',
+        faqs: [
+          { q: 'मोडी लिपी म्हणजे काय?', a: 'मोडी लिपी ही एक जोडाक्षरी लिपी असून ती मराठी लिहिण्यासाठी वापरली जात होती. ती १२व्या शतकापासून ते १९५०च्या दशकापर्यंत वापरात होती. मराठा साम्राज्य आणि पेशवेकाळात ती शासन, व्यापार आणि पत्रव्यवहाराची लिपी होती.' },
+          { q: 'मोडी लिपी आजही वापरली जाते का?', a: 'मोडी लिपी आता दैनंदिन लेखनात वापरली जात नाही. परंतु तिच्या पुनरुज्जीवनाची चळवळ वाढत आहे. युनिकोडने २०१४ मध्ये आवृत्ती ७.० मध्ये मोडी लिपीचा अधिकृतपणे समावेश केला.' },
+          { q: 'संगणकावर मोडी लिपीत कसे टाइप करायचे?', a: 'सर्वात सोपा मार्ग म्हणजे हा अनुवादक — देवनागरीत टाइप करा आणि ते तत्काळ मोडी युनिकोडमध्ये रूपांतरित होईल. मोडी अक्षरे योग्य दिसण्यासाठी <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank" style="color:var(--rust)">Noto Sans Modi</a> फॉन्ट इन्स्टॉल करा.' },
+          { q: 'हे रूपांतरण किती अचूक आहे?', a: 'हे साधन Unicode Standard 17.0 नुसार थेट अक्षर-ते-अक्षर मॅपिंग करते. प्रत्येक व्यंजन, स्वर, मात्रा आणि विरामचिन्ह योग्यरित्या मॅप केलेले आहे. हे एक लिपी परिवर्तक आहे, अनुवादक नाही.' },
+          { q: 'मोडी आणि देवनागरीत काय फरक आहे?', a: 'देवनागरीत अक्षरांवर शिरोरेखा असते. मोडी जोडाक्षरी आणि प्रवाही आहे — अक्षरे एकमेकांना जोडलेली असतात. देवनागरी अनेक भाषांमध्ये वापरली जाते तर मोडी विशेषत: मराठीसाठी विकसित झाली.' },
+          { q: 'मी हे साधन संशोधनासाठी वापरू शकतो का?', a: 'होय. हे साधन वैयक्तिक आणि संशोधन उद्देशांसाठी मोफत आहे. जुन्या हस्तलिखितांसाठी, जेथे असामान्य अक्षर-रूप असतील, तज्ज्ञांचा सल्ला घेणे उचित आहे.' },
+        ]
+      }
+    };
+
+    function updateAboutFAQ(lang) {
+      const c = ABOUT_CONTENT[lang];
+      const aboutSection = document.querySelector('.about-section');
+      aboutSection.querySelector('h2').textContent = c.aboutTitle;
+      aboutSection.querySelector('p').innerHTML = c.aboutText;
+      const faqSection = document.querySelector('.faq-section');
+      faqSection.querySelector('h2').textContent = c.faqTitle;
+      const items = faqSection.querySelectorAll('.faq-item');
+      c.faqs.forEach((faq, i) => {
+        if (items[i]) {
+          items[i].querySelector('summary').textContent = faq.q;
+          items[i].querySelector('.faq-answer').innerHTML = faq.a;
+        }
+      });
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -1346,7 +1350,7 @@
       if (lang === 'modi') {
         div.style.cssText = "font-family:'Noto Sans Modi','Segoe UI Historic',serif;font-size:24px;line-height:2;";
       } else if (lang === 'deva') {
-        div.style.cssText = "font-family:'Noto Serif Devanagari',serif;font-size:22px;line-height:1.9;";
+        div.style.cssText = "font-family:'Laila',serif;font-size:22px;line-height:1.9;";
       } else {
         div.style.cssText = "font-family:'Crimson Pro',Georgia,serif;font-size:18px;line-height:1.7;";
       }

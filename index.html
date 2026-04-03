@@ -1464,21 +1464,37 @@
 
     // ── Background Modi letter scatter ────────────────────────
     (function () {
-      // Complete Unicode range for Modi Lipi (U+11600 – U+1165F)
-      const CHARS = [];
-      // Vowels & Consonants
-      for (let cp = 0x11600; cp <= 0x11632; cp++) {
-        CHARS.push(String.fromCodePoint(cp));
-      }
-      
-      // Digits 0-9
-      for (let cp = 0x11650; cp <= 0x11659; cp++) {
+      const CHARS = [
+        // Full Vowels
+        0x11600, 0x11601, 0x11602, 0x11603, 0x11604, 0x11605, 0x11606, 0x11607, 0x11608, 0x11609, 0x1160A, 0x1160B,
+        // Consonants
+        0x1160E, 0x1160F, 0x11610, 0x11611, 0x11612, 0x11613, 0x11614, 0x11615, 0x11616, 0x11617, 0x11618, 0x11619,
+        0x1161A, 0x1161B, 0x1161C, 0x1161D, 0x1161E, 0x1161F, 0x11620, 0x11621, 0x11622, 0x11623, 0x11624, 0x11625,
+        0x11626, 0x11627, 0x11628, 0x11629, 0x1162A, 0x1162B, 0x1162C, 0x1162D, 0x1162E, 0x1162F, 0x11630, 0x11631, 0x11632,
+        // Numbers
+        0x11650, 0x11651, 0x11652, 0x11653, 0x11654, 0x11655, 0x11656, 0x11657, 0x11658, 0x11659
+      ].map(cp => String.fromCodePoint(cp));
+
+      for (let cp = 0x11600; cp <= 0x1160B; cp++) {
         CHARS.push(String.fromCodePoint(cp));
       }
 
+      for (let cp = 0x1160E; cp <= 0x11632; cp++) {
+        CHARS.push(String.fromCodePoint(cp));
+      }
+
+      for (let cp = 0x11650; cp <= 0x11659; cp++) {
+        CHARS.push(String.fromCodePoint(cp));
+      }
       const bg = document.getElementById('modi-bg');
       const points = [];
-      const count = 85; // Density of background characters
+
+      // Check if screen is small (mobile)
+      const isMobile = window.innerWidth < 768;
+
+      // Reduce density and size range for mobile
+      const count = isMobile ? 35 : 85;
+      const maxSizeBase = isMobile ? 50 : 110;
 
       function seeded(n) {
         let x = Math.sin(n + 1) * 10000;
@@ -1492,14 +1508,11 @@
       while (placed < count && attempts < 1000) {
         attempts++;
 
-        // Random position within safe bounds
         const testLeft = seeded(seedIndex++) * 94 + 3;
         const testTop = seeded(seedIndex++) * 94 + 3;
 
-        // Wide range of sizes for organic feel
-        const size = 18 + Math.floor(seeded(seedIndex++) * 110);
-
-        // Collision radius based on font size (approx 1/12th of px size in % units)
+        // Size is scaled down if on mobile
+        const size = 18 + Math.floor(seeded(seedIndex++) * maxSizeBase);
         const radius = (size / 12);
 
         let tooClose = false;
@@ -1516,7 +1529,6 @@
 
         if (!tooClose) {
           const span = document.createElement('span');
-          // Pick a random character from the full set
           span.textContent = CHARS[Math.floor(seeded(seedIndex++) * CHARS.length)];
 
           const rot = (seeded(seedIndex++) - 0.5) * 90;
@@ -1532,10 +1544,9 @@
             `opacity:${op.toFixed(3)};` +
             `white-space: nowrap;` +
             `user-select: none;` +
-            `color: var(--ink);`; 
-            `filter: blur(0.5px)`;
+            `color: var(--ink);` +
 
-          bg.appendChild(span);
+            bg.appendChild(span);
           points.push({ left: testLeft, top: testTop, radius: radius });
           placed++;
         }

@@ -758,10 +758,26 @@
         font-size: 16px;
       }
     }
+
+    /* ── Background Modi letter scatter ── */
+    #modi-bg {
+      position: absolute;
+      /* Changed from fixed to absolute */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 200%;
+      /* Set this to cover the expected scroll height of your page */
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
   </style>
 </head>
 
 <body>
+  <div id="modi-bg"></div>
+
   <div class="page">
 
     <!-- UI Language Toggle -->
@@ -1306,37 +1322,6 @@
       return out;
     }
 
-    // ── LibreTranslate ────────────────────────────────────────────────────────
-    const LT_ENDPOINTS = [
-      'https://translate.argosopentech.com/translate',
-      'https://libretranslate.de/translate',
-      'https://lt.vern.cc/translate',
-    ];
-
-    async function translateViaLibre(text, src, tgt) {
-      const body = JSON.stringify({ q: text, source: src, target: tgt, format: 'text' });
-      for (const url of LT_ENDPOINTS) {
-        const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 9000);
-        try {
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body,
-            signal: controller.signal,
-          });
-          clearTimeout(tid);
-          if (!res.ok) continue;
-          const data = await res.json();
-          if (data.translatedText) return data.translatedText;
-        } catch (e) {
-          clearTimeout(tid);
-          // try next endpoint
-        }
-      }
-      throw new Error(UI[currentUILang].errConn);
-    }
-
     // ── Main translate handler ────────────────────────────────────────────────
     async function doTranslate() {
       const text = document.getElementById('inp').value;
@@ -1476,6 +1461,86 @@
 
     // ── Init ──────────────────────────────────────────────────────────────────
     updateLangBar();
+
+    // ── Background Modi letter scatter ────────────────────────
+    (function () {
+      // Complete Unicode range for Modi Lipi (U+11600 – U+1165F)
+      const CHARS = [];
+      // Vowels & Consonants
+      for (let cp = 0x11600; cp <= 0x11632; cp++) {
+        CHARS.push(String.fromCodePoint(cp));
+      }
+      
+      // Digits 0-9
+      for (let cp = 0x11650; cp <= 0x11659; cp++) {
+        CHARS.push(String.fromCodePoint(cp));
+      }
+
+      const bg = document.getElementById('modi-bg');
+      const points = [];
+      const count = 85; // Density of background characters
+
+      function seeded(n) {
+        let x = Math.sin(n + 1) * 10000;
+        return x - Math.floor(x);
+      }
+
+      let attempts = 0;
+      let placed = 0;
+      let seedIndex = 0;
+
+      while (placed < count && attempts < 1000) {
+        attempts++;
+
+        // Random position within safe bounds
+        const testLeft = seeded(seedIndex++) * 94 + 3;
+        const testTop = seeded(seedIndex++) * 94 + 3;
+
+        // Wide range of sizes for organic feel
+        const size = 18 + Math.floor(seeded(seedIndex++) * 110);
+
+        // Collision radius based on font size (approx 1/12th of px size in % units)
+        const radius = (size / 12);
+
+        let tooClose = false;
+        for (const p of points) {
+          const dx = testLeft - p.left;
+          const dy = testTop - p.top;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < (radius + p.radius)) {
+            tooClose = true;
+            break;
+          }
+        }
+
+        if (!tooClose) {
+          const span = document.createElement('span');
+          // Pick a random character from the full set
+          span.textContent = CHARS[Math.floor(seeded(seedIndex++) * CHARS.length)];
+
+          const rot = (seeded(seedIndex++) - 0.5) * 90;
+          const op = 0.1 + seeded(seedIndex++) * 0.05;
+
+          span.style.cssText =
+            `position: absolute;` +
+            `font-family: 'Noto Sans Modi', serif;` +
+            `font-size:${size}px;` +
+            `left:${testLeft.toFixed(1)}%;` +
+            `top:${testTop.toFixed(1)}%;` +
+            `transform: translate(-50%, -50%) rotate(${rot.toFixed(1)}deg);` +
+            `opacity:${op.toFixed(3)};` +
+            `white-space: nowrap;` +
+            `user-select: none;` +
+            `color: var(--ink);`; 
+            `filter: blur(0.5px)`;
+
+          bg.appendChild(span);
+          points.push({ left: testLeft, top: testTop, radius: radius });
+          placed++;
+        }
+      }
+    })();
   </script>
 </body>
 

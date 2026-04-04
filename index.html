@@ -974,9 +974,9 @@
     const UI = {
       en: {
         eyebrow: 'Ancient Script Converter',
-        subtitle: 'Convert text across scripts — Devanagari, Modi, and English',
+        subtitle: 'Convert text across scripts — Devanagari and Modi',
         noteStrong: 'Font required:',
-        noteText: ' Install <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> from Google Fonts so Modi characters display correctly. Without it you will see empty boxes. &nbsp;|&nbsp; <strong>Tip:</strong> Ctrl+Enter to translate. &nbsp;|&nbsp; English translations use <a href="https://libretranslate.com" target="_blank">LibreTranslate</a> (free &amp; open-source).',
+        noteText: 'Install <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> from Google Fonts so Modi characters display correctly. Without it you will see empty boxes. &nbsp;|&nbsp; <strong>Tip:</strong> Ctrl+Enter to translate. &nbsp;|&nbsp',
         inputHead: 'INPUT',
         inputLang: 'Devanagari',
         outputHead: 'OUTPUT',
@@ -998,9 +998,9 @@
       },
       hi: {
         eyebrow: 'प्राचीन लिपि परिवर्तक',
-        subtitle: 'देवनागरी, मोडी लिपि और अंग्रेज़ी के बीच अनुवाद करें',
+        subtitle: 'देवनागरी और मोडी लिपि के बीच अनुवाद करें',
         noteStrong: 'फ़ॉन्ट आवश्यक:',
-        noteText: ' मोडी अक्षर सही दिखाने के लिए Google Fonts से <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इंस्टॉल करें। इसके बिना खाली बक्से दिखेंगे। &nbsp;|&nbsp; <strong>सुझाव:</strong> Ctrl+Enter दबाएँ। &nbsp;|&nbsp; अंग्रेज़ी अनुवाद हेतु <a href="https://libretranslate.com" target="_blank">LibreTranslate</a> का उपयोग।',
+        noteText: 'मोडी अक्षर सही दिखाने के लिए Google Fonts से <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इंस्टॉल करें। इसके बिना खाली बक्से दिखेंगे। &nbsp;|&nbsp; <strong>सुझाव:</strong> Ctrl+Enter दबाएँ। &nbsp;|&nbsp',
         inputHead: 'इनपुट',
         inputLang: 'देवनागरी',
         outputHead: 'आउटपुट',
@@ -1022,9 +1022,9 @@
       },
       mr: {
         eyebrow: 'प्राचीन लिपी परिवर्तक',
-        subtitle: 'देवनागरी, मोडी लिपी आणि इंग्रजी दरम्यान भाषांतर करा',
+        subtitle: 'देवनागरी आणि मोडी लिपींमध्ये अनुवाद करा',
         noteStrong: 'फॉन्ट आवश्यक:',
-        noteText: ' मोडी अक्षरे योग्य दिसण्यासाठी Google Fonts वरून <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इन्स्टॉल करा। त्याशिवाय रिकामी चौकटे दिसतील। &nbsp;|&nbsp; <strong>टीप:</strong> Ctrl+Enter दाबा। &nbsp;|&nbsp; इंग्रजी भाषांतरासाठी <a href="https://libretranslate.com" target="_blank">LibreTranslate</a> वापरले जाते।',
+        noteText: 'मोडी अक्षरे योग्य दिसण्यासाठी Google Fonts वरून <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Modi" target="_blank">Noto Sans Modi</a> इन्स्टॉल करा। त्याशिवाय रिकामी चौकटे दिसतील। &nbsp;|&nbsp; <strong>टीप:</strong> Ctrl+Enter दाबा। &nbsp;|&nbsp',
         inputHead: 'इनपुट',
         inputLang: 'देवनागरी',
         outputHead: 'आउटपुट',
@@ -1466,62 +1466,41 @@
     (function () {
       const CHARS = [
         // Full Vowels
-        0x11600, 0x11601, 0x11602, 0x11603, 0x11604, 0x11605, 0x11606, 0x11607, 0x11608, 0x11609, 0x1160A, 0x1160B,
+        0x11600, 0x11601, 0x11602, 0x11603, 0x11604, 0x11605, 0x11606, 0x11607, 0x11608, 0x11609, 0x1160A, 0x1160B, 0x1160C, 0x1160D,
         // Consonants
         0x1160E, 0x1160F, 0x11610, 0x11611, 0x11612, 0x11613, 0x11614, 0x11615, 0x11616, 0x11617, 0x11618, 0x11619,
         0x1161A, 0x1161B, 0x1161C, 0x1161D, 0x1161E, 0x1161F, 0x11620, 0x11621, 0x11622, 0x11623, 0x11624, 0x11625,
-        0x11626, 0x11627, 0x11628, 0x11629, 0x1162A, 0x1162B, 0x1162C, 0x1162D, 0x1162E, 0x1162F, 0x11630, 0x11631, 0x11632,
+        0x11626, 0x11627, 0x11628, 0x11629, 0x1162A, 0x1162B, 0x1162C, 0x1162D, 0x1162E, 0x1162F,
+        // Punctuation
+        0x11641, 0x11642, 0x11643,
+        // Sign
+        0x11644,
         // Numbers
         0x11650, 0x11651, 0x11652, 0x11653, 0x11654, 0x11655, 0x11656, 0x11657, 0x11658, 0x11659
       ].map(cp => String.fromCodePoint(cp));
 
-      for (let cp = 0x11600; cp <= 0x1160B; cp++) {
-        CHARS.push(String.fromCodePoint(cp));
-      }
-
-      for (let cp = 0x1160E; cp <= 0x11632; cp++) {
-        CHARS.push(String.fromCodePoint(cp));
-      }
-
-      for (let cp = 0x11650; cp <= 0x11659; cp++) {
-        CHARS.push(String.fromCodePoint(cp));
-      }
       const bg = document.getElementById('modi-bg');
       const points = [];
-
-      // Check if screen is small (mobile)
       const isMobile = window.innerWidth < 768;
-
-      // Reduce density and size range for mobile
-      const count = isMobile ? 35 : 85;
+      const count = isMobile ? 30 : 80;
       const maxSizeBase = isMobile ? 50 : 110;
 
-      function seeded(n) {
-        let x = Math.sin(n + 1) * 10000;
-        return x - Math.floor(x);
-      }
+      let attempts = 0, placed = 0;
 
-      let attempts = 0;
-      let placed = 0;
-      let seedIndex = 0;
-
-      while (placed < count && attempts < 1000) {
+      while (placed < count && attempts < 1500) {
         attempts++;
 
-        const testLeft = seeded(seedIndex++) * 94 + 3;
-        const testTop = seeded(seedIndex++) * 94 + 3;
-
-        // Size is scaled down if on mobile
-        const size = 18 + Math.floor(seeded(seedIndex++) * maxSizeBase);
-        const radius = (size / 12);
+        // Using Math.random() makes it different every single time
+        const testLeft = Math.random() * 94 + 3;
+        const testTop = Math.random() * 94 + 3;
+        const size = 18 + Math.floor(Math.random() * maxSizeBase);
+        const radius = (size / 10);
 
         let tooClose = false;
         for (const p of points) {
           const dx = testLeft - p.left;
           const dy = testTop - p.top;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < (radius + p.radius)) {
+          if (Math.sqrt(dx * dx + dy * dy) < (radius + p.radius)) {
             tooClose = true;
             break;
           }
@@ -1529,24 +1508,24 @@
 
         if (!tooClose) {
           const span = document.createElement('span');
-          span.textContent = CHARS[Math.floor(seeded(seedIndex++) * CHARS.length)];
+          span.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+          const rot = (Math.random() - 0.5) * 100;
+          const op = 0.1 + Math.random() * 0.05;
 
-          const rot = (seeded(seedIndex++) - 0.5) * 90;
-          const op = 0.1 + seeded(seedIndex++) * 0.05;
+          span.style.cssText = `
+            position: absolute;
+            font-family: 'Noto Sans Modi', serif;
+            font-size: ${size}px;
+            left: ${testLeft.toFixed(1)}%;
+            top: ${testTop.toFixed(1)}%;
+            transform: translate(-50%, -50%) rotate(${rot.toFixed(1)}deg);
+            opacity: ${op.toFixed(3)};
+            white-space: nowrap;
+            user-select: none;
+            color: var(--ink);
+          `;
 
-          span.style.cssText =
-            `position: absolute;` +
-            `font-family: 'Noto Sans Modi', serif;` +
-            `font-size:${size}px;` +
-            `left:${testLeft.toFixed(1)}%;` +
-            `top:${testTop.toFixed(1)}%;` +
-            `transform: translate(-50%, -50%) rotate(${rot.toFixed(1)}deg);` +
-            `opacity:${op.toFixed(3)};` +
-            `white-space: nowrap;` +
-            `user-select: none;` +
-            `color: var(--ink);` +
-
-            bg.appendChild(span);
+          bg.appendChild(span);
           points.push({ left: testLeft, top: testTop, radius: radius });
           placed++;
         }
